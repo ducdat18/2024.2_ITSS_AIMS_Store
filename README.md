@@ -14,7 +14,7 @@ This project is managed with [Bun](https://bun.sh/), a fast JavaScript runtime a
 ### 🚀 Getting Started
 1. **Clone the repository**
    ```sh
-   git clone https://github.com/yourusername/yourproject.git
+   git clone https://github.com/ducdat18/2024.2_ITSS_AIMS_Store.git
    cd yourproject
    ```
 
