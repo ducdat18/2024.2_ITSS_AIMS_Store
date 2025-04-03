@@ -1,6 +1,6 @@
 // src/pages/customer/HomePage.tsx
 import React, { useState, useEffect } from 'react';
-import { Box, Container, Typography, Button, Grid } from '@mui/material';
+import { Box, Container, Typography, Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { Product } from '../../types';
 import Newsletter from '../../components/common/Newsletter';
@@ -42,7 +42,7 @@ const HomePage: React.FC = () => {
   };
 
   const handlePageChange = (
-    event: React.ChangeEvent<unknown>,
+    _event: React.ChangeEvent<unknown>,
     page: number
   ) => {
     setCurrentPage(page);
