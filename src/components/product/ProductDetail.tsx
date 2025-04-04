@@ -3,15 +3,15 @@ import React, { useState } from 'react';
 import {
   Box,
   Container,
-  Grid,
+  Grid2,
   Typography,
-  Rating,
   Button,
   Divider,
   TextField,
   List,
   ListItem,
   ListItemText,
+  Chip,
 } from '@mui/material';
 import { Product, ProductCategory } from '../../types';
 import { formatCurrency } from '../../utils/formatters';
@@ -36,6 +36,14 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
 
   const handleAddToCart = () => {
     onAddToCart(product, quantity);
+  };
+
+  // Calculate final price based on discount
+  const getActualPrice = () => {
+    if (product.discount) {
+      return Math.round(product.price * (1 - product.discount / 100));
+    }
+    return product.price;
   };
 
   // Generate additional info based on product type
@@ -173,9 +181,9 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
 
   return (
     <Container maxWidth="lg" sx={{ py: 5 }}>
-      <Grid container spacing={5}>
+      <Grid2 container spacing={5}>
         {/* Left Column - Images */}
-        <Grid item xs={12} md={6}>
+        <Grid2 size={{ xs: 12, md: 6 }}>
           <Box className="left-images" sx={{ mb: 2 }}>
             <Box
               sx={{
@@ -185,8 +193,25 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                 alignItems: 'center',
                 height: 400,
                 mb: 2,
+                position: 'relative',
               }}
             >
+              {/* Discount Badge */}
+              {product.discount && (
+                <Chip
+                  label={`${product.discount}% OFF`}
+                  color="error"
+                  sx={{
+                    position: 'absolute',
+                    top: 16,
+                    right: 16,
+                    fontWeight: 'bold',
+                    fontSize: '0.9rem',
+                    px: 1,
+                  }}
+                />
+              )}
+
               {/* Product Placeholder - Replace with actual image */}
               <Typography variant="h1" sx={{ color: '#ddd' }}>
                 {product.category}
@@ -208,36 +233,61 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
               </Typography>
             </Box>
           </Box>
-        </Grid>
+        </Grid2>
 
         {/* Right Column - Product Details */}
-        <Grid item xs={12} md={6}>
+        <Grid2 size={{ xs: 12, md: 6 }}>
           <Box className="right-content">
             <Typography variant="h4" component="h1" gutterBottom>
               {product.title}
             </Typography>
 
-            <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-              <Rating value={5} readOnly size="small" />
-              <Typography
-                variant="body2"
-                sx={{ ml: 1, color: 'text.secondary' }}
-              >
-                (5.0)
-              </Typography>
-            </Box>
-
-            <Typography
-              variant="h5"
-              sx={{
-                fontWeight: 'bold',
-                color: 'text.secondary',
-                pb: 2,
-                borderBottom: '1px solid #eee',
-              }}
-            >
-              {formatCurrency(product.price)}
-            </Typography>
+            {/* Price Display */}
+            {product.discount ? (
+              <Box sx={{ mb: 3 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', mb: 0.5 }}>
+                  <Typography
+                    variant="h5"
+                    sx={{ fontWeight: 'bold', color: 'error.main' }}
+                  >
+                    {formatCurrency(getActualPrice())}
+                  </Typography>
+                  <Chip
+                    label={`-${product.discount}%`}
+                    color="error"
+                    size="small"
+                    sx={{ ml: 1, fontWeight: 'bold' }}
+                  />
+                </Box>
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  <Typography variant="body2" color="text.secondary">
+                    Original price:
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      ml: 1,
+                      color: 'text.secondary',
+                      textDecoration: 'line-through',
+                    }}
+                  >
+                    {formatCurrency(product.price)}
+                  </Typography>
+                </Box>
+                <Typography variant="body2" color="text.secondary">
+                  Price includes 10% VAT
+                </Typography>
+              </Box>
+            ) : (
+              <Box sx={{ mb: 3 }}>
+                <Typography variant="h5" color="primary" fontWeight="bold">
+                  {formatCurrency(product.price)}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Price includes 10% VAT
+                </Typography>
+              </Box>
+            )}
 
             <Typography variant="body1" sx={{ my: 3 }}>
               {product.description}
@@ -270,6 +320,11 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
               </Typography>
             </Box>
 
+            {/* Stock information */}
+            <Typography variant="body2" color="success.main" sx={{ mb: 2 }}>
+              In Stock: {product.quantity} items
+            </Typography>
+
             {/* Quantity selector */}
             <Box
               sx={{
@@ -296,10 +351,14 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
                   size="small"
                   value={quantity}
                   onChange={handleQuantityChange}
-                  inputProps={{
-                    min: 1,
-                    max: product.quantity,
-                    style: { textAlign: 'center' },
+                  slotProps={{
+                    input: {
+                      inputProps: {
+                        min: 1,
+                        max: product.quantity,
+                        style: { textAlign: 'center' },
+                      },
+                    },
                   }}
                   sx={{
                     width: 60,
@@ -329,7 +388,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
               }}
             >
               <Typography variant="h5">
-                Total: {formatCurrency(product.price * quantity)}
+                Total: {formatCurrency(getActualPrice() * quantity)}
               </Typography>
 
               <Button
@@ -364,8 +423,8 @@ const ProductDetail: React.FC<ProductDetailProps> = ({
               </Typography>
             </Box>
           </Box>
-        </Grid>
-      </Grid>
+        </Grid2>
+      </Grid2>
     </Container>
   );
 };

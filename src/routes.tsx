@@ -3,8 +3,6 @@ import { createBrowserRouter, Navigate } from 'react-router-dom';
 
 // Layouts
 import MainLayout from './components/layout/MainLayout';
-import AdminLayout from './components/layout/AdminLayout';
-import ProductManagerLayout from './components/layout/ProductManagerLayout';
 
 // Customer pages
 import HomePage from './pages/customer/HomePage';
@@ -14,20 +12,12 @@ import CheckoutPage from './pages/customer/CheckoutPage';
 import OrderConfirmationPage from './pages/customer/OrderConfirmationPage';
 
 // Admin pages
-import AdminDashboardPage from './pages/admin/DashboardPage';
-import UserManagementPage from './pages/admin/UserManagementPage';
 
 // Product Manager pages
 
 // Auth
 import LoginPage from './pages/auth/LoginPage';
-import ProtectedRoute from './components/common/ProtectedRoute';
-import { UserRole } from './types';
-import OrderManagementPage from './pages/product-management/OrderManagementPage';
-import EditProductPage from './pages/product-management/EditProductPage';
-import AddProductPage from './pages/product-management/AddProductPage';
-import ProductListPage from './pages/product-management/ProductListPage';
-import ProductDashboardPage from './pages/product-management/ProductDashboardPage';
+import RegisterPage from './pages/auth/RegisterPage';
 
 export const router = createBrowserRouter([
   {
@@ -71,6 +61,10 @@ export const router = createBrowserRouter([
   {
     path: '/login',
     element: <LoginPage />,
+  },
+  {
+    path: '/register',
+    element: <RegisterPage />,
   },
   {
     path: '*',

@@ -3,7 +3,7 @@ import React from 'react';
 import {
   Container,
   Typography,
-  Grid,
+  Grid2,
   Card,
   Box,
   CardContent,
@@ -43,8 +43,8 @@ const CategoryGrid: React.FC = () => {
         Media Categories
       </Typography>
 
-      <Grid container spacing={3}>
-        <Grid item xs={6} sm={3}>
+      <Grid2 container spacing={3}>
+        <Grid2 size={{ xs: 6, sm: 3 }}>
           <Card
             sx={{
               height: '100%',
@@ -74,9 +74,9 @@ const CategoryGrid: React.FC = () => {
               </Typography>
             </CardContent>
           </Card>
-        </Grid>
+        </Grid2>
 
-        <Grid item xs={6} sm={3}>
+        <Grid2 size={{ xs: 6, sm: 3 }}>
           <Card
             sx={{
               height: '100%',
@@ -106,9 +106,9 @@ const CategoryGrid: React.FC = () => {
               </Typography>
             </CardContent>
           </Card>
-        </Grid>
+        </Grid2>
 
-        <Grid item xs={6} sm={3}>
+        <Grid2 size={{ xs: 6, sm: 3 }}>
           <Card
             sx={{
               height: '100%',
@@ -138,9 +138,9 @@ const CategoryGrid: React.FC = () => {
               </Typography>
             </CardContent>
           </Card>
-        </Grid>
+        </Grid2>
 
-        <Grid item xs={6} sm={3}>
+        <Grid2 size={{ xs: 6, sm: 3 }}>
           <Card
             sx={{
               height: '100%',
@@ -170,8 +170,8 @@ const CategoryGrid: React.FC = () => {
               </Typography>
             </CardContent>
           </Card>
-        </Grid>
-      </Grid>
+        </Grid2>
+      </Grid2>
     </Container>
   );
 };

@@ -1,6 +1,6 @@
 // src/components/home/AboutSection.tsx
 import React from 'react';
-import { Box, Container, Grid, Typography, Button } from '@mui/material';
+import { Box, Container, Grid2, Typography, Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
 const AboutSection: React.FC = () => {
@@ -15,8 +15,8 @@ const AboutSection: React.FC = () => {
       }}
     >
       <Container>
-        <Grid container spacing={4} alignItems="center">
-          <Grid item xs={12} md={6}>
+        <Grid2 container spacing={4} alignItems="center">
+          <Grid2 size={{ xs: 12, md: 6 }}>
             <Box className="img-box">
               <Box
                 component="img"
@@ -27,8 +27,8 @@ const AboutSection: React.FC = () => {
                 }}
               />
             </Box>
-          </Grid>
-          <Grid item xs={12} md={6}>
+          </Grid2>
+          <Grid2 size={{ xs: 12, md: 6 }}>
             <Box className="detail-box">
               <Box className="heading_container">
                 <Typography
@@ -41,14 +41,14 @@ const AboutSection: React.FC = () => {
                   About AIMS
                 </Typography>
               </Box>
-              <Typography paragraph sx={{ mt: 2 }}>
+              <Typography sx={{ mt: 2 }}>
                 AIMS is a desktop e-commerce software that operates 24/7,
                 allowing new users to easily familiarize themselves. This
                 software can serve up to 1,000 customers simultaneously without
                 significantly reducing performance and can operate continuously
                 for 300 hours without failure.
               </Typography>
-              <Typography paragraph>
+              <Typography>
                 Our store specializes in physical media products including
                 books, CDs, LP records, and DVDs. We provide detailed
                 information about each product and ensure quality service.
@@ -62,8 +62,8 @@ const AboutSection: React.FC = () => {
                 Read More
               </Button>
             </Box>
-          </Grid>
-        </Grid>
+          </Grid2>
+        </Grid2>
       </Container>
     </Box>
   );

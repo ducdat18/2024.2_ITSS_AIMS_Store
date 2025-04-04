@@ -1,6 +1,13 @@
 // src/components/layout/Footer.tsx
 import React from 'react';
-import { Box, Container, Grid, Typography, Link, Divider } from '@mui/material';
+import {
+  Box,
+  Container,
+  Grid2,
+  Typography,
+  Link,
+  Divider,
+} from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
 import { Facebook, Twitter, Instagram, LinkedIn } from '@mui/icons-material';
 
@@ -19,8 +26,8 @@ const Footer: React.FC = () => {
       }}
     >
       <Container>
-        <Grid container spacing={4}>
-          <Grid item xs={12} sm={6} md={3}>
+        <Grid2 container spacing={4}>
+          <Grid2 size={{ xs: 12, sm: 6, md: 3 }}>
             <Box className="first-item">
               <Typography variant="h6" sx={{ mb: 2, fontWeight: 'bold' }}>
                 AIMS Store
@@ -56,9 +63,9 @@ const Footer: React.FC = () => {
                 </Box>
               </Box>
             </Box>
-          </Grid>
+          </Grid2>
 
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid2 size={{ xs: 12, sm: 6, md: 3 }}>
             <Typography variant="h6" sx={{ mb: 2, fontWeight: 'bold' }}>
               Shop By Category
             </Typography>
@@ -104,9 +111,9 @@ const Footer: React.FC = () => {
                 </Link>
               </Box>
             </Box>
-          </Grid>
+          </Grid2>
 
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid2 size={{ xs: 12, sm: 6, md: 3 }}>
             <Typography variant="h6" sx={{ mb: 2, fontWeight: 'bold' }}>
               Customer Service
             </Typography>
@@ -142,9 +149,9 @@ const Footer: React.FC = () => {
                 </Link>
               </Box>
             </Box>
-          </Grid>
+          </Grid2>
 
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid2 size={{ xs: 12, sm: 6, md: 3 }}>
             <Typography variant="h6" sx={{ mb: 2, fontWeight: 'bold' }}>
               Follow Us
             </Typography>
@@ -162,8 +169,8 @@ const Footer: React.FC = () => {
                 <LinkedIn />
               </Link>
             </Box>
-          </Grid>
-        </Grid>
+          </Grid2>
+        </Grid2>
 
         <Divider sx={{ borderColor: 'rgba(255, 255, 255, 0.1)', my: 3 }} />
 

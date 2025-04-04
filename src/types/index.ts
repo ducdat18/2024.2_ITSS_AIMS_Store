@@ -38,7 +38,7 @@ export interface BaseProduct {
   category: ProductCategory;
   value: number; // Base value without VAT
   price: number; // Current price without VAT (30%-150% of value)
-  
+  discount?: number; 
   // Physical attributes (required for all products)
   barcode: string;
   description: string; // new, used, primary color, condition for return

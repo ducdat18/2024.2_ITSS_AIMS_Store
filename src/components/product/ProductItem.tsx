@@ -5,9 +5,8 @@ import {
   Box,
   CardContent,
   Typography,
-  CardActions,
   Button,
-  Rating,
+  Chip,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -42,6 +41,54 @@ const ProductItem: React.FC<ProductItemProps> = ({ product, onAddToCart }) => {
     }
   };
 
+  // Calculate discounted price if discount exists
+  const getDisplayPrice = () => {
+    if (product.discount) {
+      const discountedPrice = Math.round(
+        product.price * (1 - product.discount / 100)
+      );
+      return (
+        <Box>
+          <Typography
+            variant="h6"
+            sx={{
+              fontWeight: 500,
+              color: 'error.main',
+              display: 'flex',
+              alignItems: 'center',
+            }}
+          >
+            {formatCurrency(discountedPrice)}
+            <Chip
+              label={`-${product.discount}%`}
+              color="error"
+              size="small"
+              sx={{ ml: 1, fontSize: '0.7rem', height: 20 }}
+            />
+          </Typography>
+          <Typography
+            variant="body2"
+            sx={{
+              textDecoration: 'line-through',
+              color: 'text.secondary',
+            }}
+          >
+            {formatCurrency(product.price)}
+          </Typography>
+        </Box>
+      );
+    }
+
+    return (
+      <Typography
+        variant="h6"
+        sx={{ fontWeight: 500, color: 'text.secondary' }}
+      >
+        {formatCurrency(product.price)}
+      </Typography>
+    );
+  };
+
   return (
     <Card
       elevation={0}
@@ -71,6 +118,19 @@ const ProductItem: React.FC<ProductItemProps> = ({ product, onAddToCart }) => {
           backgroundColor: '#f8f8f8',
         }}
       >
+        {product.discount && (
+          <Chip
+            label={`${product.discount}% OFF`}
+            color="error"
+            size="small"
+            sx={{
+              position: 'absolute',
+              top: 10,
+              right: 10,
+              fontWeight: 'bold',
+            }}
+          />
+        )}
         <Box
           sx={{
             display: 'flex',
@@ -169,19 +229,12 @@ const ProductItem: React.FC<ProductItemProps> = ({ product, onAddToCart }) => {
         <Box
           sx={{
             display: 'flex',
-            justifyContent: 'space-between',
+            justifyContent: 'flex-start',
             alignItems: 'center',
             mt: 1,
           }}
         >
-          <Typography
-            variant="h6"
-            sx={{ fontWeight: 500, color: 'text.secondary' }}
-          >
-            {formatCurrency(product.price)}
-          </Typography>
-
-          <Rating value={5} readOnly size="small" />
+          {getDisplayPrice()}
         </Box>
       </CardContent>
     </Card>

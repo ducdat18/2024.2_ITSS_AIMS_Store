@@ -4,7 +4,7 @@ import {
   Box,
   Container,
   Typography,
-  Grid,
+  Grid2,
   Button,
   Table,
   TableBody,
@@ -245,9 +245,13 @@ const CartPage: React.FC = () => {
                               parseInt(e.target.value) || 1
                             )
                           }
-                          inputProps={{
-                            min: 1,
-                            style: { textAlign: 'center' },
+                          slotProps={{
+                            input: {
+                              inputProps: {
+                                min: 1,
+                                style: { textAlign: 'center' },
+                              },
+                            },
                           }}
                           sx={{
                             width: 60,
@@ -298,8 +302,8 @@ const CartPage: React.FC = () => {
             </Table>
           </TableContainer>
 
-          <Grid container spacing={3}>
-            <Grid item xs={12} md={6}>
+          <Grid2 container spacing={3}>
+            <Grid2 size={{ xs: 12, md: 6 }}>
               <Button
                 variant="outlined"
                 color="primary"
@@ -307,8 +311,8 @@ const CartPage: React.FC = () => {
               >
                 Continue Shopping
               </Button>
-            </Grid>
-            <Grid item xs={12} md={6}>
+            </Grid2>
+            <Grid2 size={{ xs: 12, md: 6 }}>
               <Paper
                 elevation={1}
                 sx={{ p: 3, bgcolor: '#f8f9ff', borderRadius: 2 }}
@@ -368,8 +372,8 @@ const CartPage: React.FC = () => {
                   Proceed to Checkout
                 </Button>
               </Paper>
-            </Grid>
-          </Grid>
+            </Grid2>
+          </Grid2>
         </>
       )}
     </Container>

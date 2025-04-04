@@ -1,6 +1,6 @@
 // src/components/products/ProductGrid.tsx
 import React from 'react';
-import { Grid, Box, Typography, Pagination } from '@mui/material';
+import { Grid2, Box, Typography, Pagination } from '@mui/material';
 import ProductItem from './ProductItem';
 import { Product } from '../../types';
 
@@ -19,7 +19,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({
   currentPage,
   totalPages,
   onPageChange,
-  onAddToCart
+  onAddToCart,
 }) => {
   return (
     <Box>
@@ -33,25 +33,22 @@ const ProductGrid: React.FC<ProductGridProps> = ({
           </Typography>
         </Box>
       )}
-      
-      <Grid container spacing={3}>
+
+      <Grid2 container spacing={3}>
         {products.map((product) => (
-          <Grid item key={product.id} xs={12} sm={6} md={4} lg={3}>
-            <ProductItem 
-              product={product} 
-              onAddToCart={onAddToCart} 
-            />
-          </Grid>
+          <Grid2 key={product.id} size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
+            <ProductItem product={product} onAddToCart={onAddToCart} />
+          </Grid2>
         ))}
-      </Grid>
-      
+      </Grid2>
+
       {totalPages > 1 && (
         <Box sx={{ display: 'flex', justifyContent: 'center', mt: 5 }}>
-          <Pagination 
-            count={totalPages} 
-            page={currentPage} 
-            onChange={onPageChange} 
-            color="primary" 
+          <Pagination
+            count={totalPages}
+            page={currentPage}
+            onChange={onPageChange}
+            color="primary"
             shape="rounded"
           />
         </Box>

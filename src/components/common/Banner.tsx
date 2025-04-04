@@ -1,6 +1,6 @@
 // src/components/home/Banner.tsx
 import React from 'react';
-import { Box, Container, Grid, Typography, Button } from '@mui/material';
+import { Box, Container, Grid2, Typography, Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
 const Banner: React.FC = () => {
@@ -9,8 +9,8 @@ const Banner: React.FC = () => {
   return (
     <Box component="section" className="slider_section">
       <Container>
-        <Grid container alignItems="center" spacing={4}>
-          <Grid item xs={12} md={6}>
+        <Grid2 container alignItems="center" spacing={4}>
+          <Grid2 size={{ xs: 12, md: 6 }}>
             <Box className="detail-box">
               <Typography variant="h1" sx={{ fontWeight: 'bold', mb: 2 }}>
                 Discover Quality
@@ -45,8 +45,8 @@ const Banner: React.FC = () => {
                 </Button>
               </Box>
             </Box>
-          </Grid>
-          <Grid item xs={12} md={6}>
+          </Grid2>
+          <Grid2 size={{ xs: 12, md: 6 }}>
             <Box className="img-box" sx={{ textAlign: 'center' }}>
               {/* Replace with actual image */}
               <Box
@@ -59,8 +59,8 @@ const Banner: React.FC = () => {
                 }}
               />
             </Box>
-          </Grid>
-        </Grid>
+          </Grid2>
+        </Grid2>
       </Container>
     </Box>
   );

@@ -3,7 +3,7 @@ import React from 'react';
 import {
   Box,
   Container,
-  Grid,
+  Grid2,
   Typography,
   TextField,
   Button,
@@ -96,8 +96,8 @@ const InfoSection: React.FC = () => {
 
         {/* Info Content */}
         <Box className="info_top" sx={{ py: 4 }}>
-          <Grid container spacing={4}>
-            <Grid item xs={12} sm={6} md={4} lg={3}>
+          <Grid2 container spacing={4}>
+            <Grid2 size={{ xs: 12, md: 4, sm: 6, lg: 3 }}>
               <Box className="info_links">
                 <Typography
                   variant="h4"
@@ -144,9 +144,9 @@ const InfoSection: React.FC = () => {
                   ))}
                 </Box>
               </Box>
-            </Grid>
+            </Grid2>
 
-            <Grid item xs={12} sm={6} md={4} lg={3} sx={{ mx: 'auto' }}>
+            <Grid2 size={{ xs: 12, md: 4, sm: 6, lg: 3 }} sx={{ mx: 'auto' }}>
               <Box className="info_post">
                 <Typography variant="h5" sx={{ mb: 2 }}>
                   FEATURED PRODUCTS
@@ -189,9 +189,9 @@ const InfoSection: React.FC = () => {
                   ))}
                 </Box>
               </Box>
-            </Grid>
+            </Grid2>
 
-            <Grid item xs={12} md={4}>
+            <Grid2 size={{ xs: 12, md: 4 }}>
               <Box className="info_form">
                 <Typography variant="h4" sx={{ mb: 2 }}>
                   SIGN UP TO OUR NEWSLETTER
@@ -270,8 +270,8 @@ const InfoSection: React.FC = () => {
                   ))}
                 </Box>
               </Box>
-            </Grid>
-          </Grid>
+            </Grid2>
+          </Grid2>
         </Box>
       </Container>
     </Box>

@@ -1,6 +1,6 @@
 // src/components/home/CategoryBanner.tsx
 import React from 'react';
-import { Grid, Box, Typography, Button, Paper } from '@mui/material';
+import { Grid2, Box, Typography, Button, Paper } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import {
   Book as BookIcon,
@@ -74,9 +74,9 @@ const CategoryBanner: React.FC = () => {
         </Typography>
       </Box>
 
-      <Grid container spacing={4}>
+      <Grid2 container spacing={4}>
         {categories.map((category, index) => (
-          <Grid item xs={12} sm={6} md={3} key={index}>
+          <Grid2 size={{ xs: 12, sm: 6, md: 3 }} key={index}>
             <Paper
               elevation={0}
               sx={{
@@ -154,9 +154,9 @@ const CategoryBanner: React.FC = () => {
                 Explore
               </Button>
             </Paper>
-          </Grid>
+          </Grid2>
         ))}
-      </Grid>
+      </Grid2>
     </Box>
   );
 };
