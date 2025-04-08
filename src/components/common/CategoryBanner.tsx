@@ -1,4 +1,4 @@
-// src/components/home/CategoryBanner.tsx
+// src/components/common/CategoryBanner.tsx
 import React from 'react';
 import { Grid2, Box, Typography, Button, Paper } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
@@ -7,6 +7,7 @@ import {
   Album as CDIcon,
   Radio as LPIcon,
   MovieCreation as DVDIcon,
+  Explore as ExploreIcon,
 } from '@mui/icons-material';
 
 const CategoryBanner: React.FC = () => {
@@ -16,26 +17,26 @@ const CategoryBanner: React.FC = () => {
     {
       title: 'Books',
       description: 'Explore our collection of books',
-      path: '/products/category/BOOK',
-      icon: <BookIcon sx={{ fontSize: 64 }} />,
+      path: '/products?category=BOOK',
+      icon: <BookIcon sx={{ fontSize: 64, color: '#64ffda' }} />,
     },
     {
       title: 'CDs',
       description: 'Discover music albums and collections',
-      path: '/products/category/CD',
-      icon: <CDIcon sx={{ fontSize: 64 }} />,
+      path: '/products?category=CD',
+      icon: <CDIcon sx={{ fontSize: 64, color: '#64ffda' }} />,
     },
     {
       title: 'LP Records',
       description: 'Browse our vinyl collection',
-      path: '/products/category/LP',
-      icon: <LPIcon sx={{ fontSize: 64 }} />,
+      path: '/products?category=LP',
+      icon: <LPIcon sx={{ fontSize: 64, color: '#64ffda' }} />,
     },
     {
       title: 'DVDs',
       description: 'Find movies and shows',
-      path: '/products/category/DVD',
-      icon: <DVDIcon sx={{ fontSize: 64 }} />,
+      path: '/products?category=DVD',
+      icon: <DVDIcon sx={{ fontSize: 64, color: '#64ffda' }} />,
     },
   ];
 
@@ -50,19 +51,22 @@ const CategoryBanner: React.FC = () => {
             position: 'relative',
             display: 'inline-block',
             pb: 2,
+            color: 'text.primary',
             '&::after': {
               content: '""',
               position: 'absolute',
               width: '80px',
               height: '4px',
-              backgroundColor: 'primary.main', // Blue
+              background:
+                'linear-gradient(90deg, rgba(100, 255, 218, 0.7), rgba(100, 255, 218, 0.1))',
               bottom: 0,
               left: '50%',
               transform: 'translateX(-50%)',
+              borderRadius: 2,
             },
           }}
         >
-          Browse Categories
+          Media Categories
         </Typography>
         <Typography
           variant="body1"
@@ -78,7 +82,7 @@ const CategoryBanner: React.FC = () => {
         {categories.map((category, index) => (
           <Grid2 size={{ xs: 12, sm: 6, md: 3 }} key={index}>
             <Paper
-              elevation={0}
+              elevation={3}
               sx={{
                 height: 300,
                 overflow: 'hidden',
@@ -91,12 +95,29 @@ const CategoryBanner: React.FC = () => {
                 cursor: 'pointer',
                 transition: 'all 0.3s',
                 borderRadius: 2,
-                backgroundColor: 'white',
-                border: '1px solid',
-                borderColor: 'rgba(0, 0, 0, 0.08)',
+                backgroundImage:
+                  'linear-gradient(135deg, #0d2538 0%, #041c2c 100%)',
+                border: '1px solid rgba(100, 255, 218, 0.1)',
+                position: 'relative',
+                '&::before': {
+                  content: '""',
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  width: '100%',
+                  height: '100%',
+                  backgroundImage:
+                    'radial-gradient(circle at 50% 50%, rgba(100, 255, 218, 0.1) 0%, transparent 70%)',
+                  opacity: 0,
+                  transition: 'opacity 0.5s ease',
+                },
                 '&:hover': {
-                  boxShadow: '0 8px 24px rgba(0, 0, 0, 0.12)',
+                  boxShadow: '0 15px 35px rgba(0, 0, 0, 0.5)',
                   transform: 'translateY(-8px)',
+                  borderColor: 'rgba(100, 255, 218, 0.3)',
+                  '&::before': {
+                    opacity: 1,
+                  },
                   '& .category-icon': {
                     transform: 'scale(1.1)',
                   },
@@ -111,7 +132,6 @@ const CategoryBanner: React.FC = () => {
               <Box
                 className="category-icon"
                 sx={{
-                  color: 'primary.main', // Blue
                   mb: 3,
                   transition: 'all 0.4s ease',
                 }}
@@ -123,7 +143,7 @@ const CategoryBanner: React.FC = () => {
                 sx={{
                   fontWeight: 'bold',
                   mb: 1,
-                  color: 'secondary.main', // Black
+                  color: 'primary.light',
                 }}
               >
                 {category.title}
@@ -139,12 +159,18 @@ const CategoryBanner: React.FC = () => {
               </Typography>
               <Button
                 className="category-button"
-                variant="contained"
-                color="warning" // Yellow
+                variant="outlined"
+                color="primary"
+                endIcon={<ExploreIcon />}
                 sx={{
                   opacity: 0.9,
                   transform: 'translateY(10px)',
                   transition: 'all 0.3s',
+                  borderColor: 'rgba(100, 255, 218, 0.5)',
+                  '&:hover': {
+                    borderColor: 'rgba(100, 255, 218, 0.8)',
+                    backgroundColor: 'rgba(100, 255, 218, 0.05)',
+                  },
                 }}
                 onClick={(e) => {
                   e.stopPropagation();

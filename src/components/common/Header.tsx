@@ -9,8 +9,6 @@ import {
   InputBase,
   Badge,
   Container,
-  Menu,
-  MenuItem,
   Button,
   Drawer,
   List,
@@ -30,14 +28,14 @@ import {
   Album as CDIcon,
   Radio as LPIcon,
   MovieCreation as DVDIcon,
-  ExpandMore as ExpandMoreIcon,
+  Waves as WavesIcon,
+  Inventory as InventoryIcon,
 } from '@mui/icons-material';
 import { Link, useNavigate } from 'react-router-dom';
 
 const Header: React.FC = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const navigate = useNavigate();
@@ -51,20 +49,7 @@ const Header: React.FC = () => {
     navigate(`/products?search=${searchQuery}`);
   };
 
-  const handleCategoryClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleCategoryClose = () => {
-    setAnchorEl(null);
-  };
-
-  const handleCategorySelect = (category: string) => {
-    navigate(`/products/category/${category}`);
-    setAnchorEl(null);
-    setDrawerOpen(false);
-  };
-
+  // Category definitions - now only used in mobile drawer
   const categories = [
     { label: 'Books', value: 'BOOK', icon: <BookIcon /> },
     { label: 'CDs', value: 'CD', icon: <CDIcon /> },
@@ -73,16 +58,7 @@ const Header: React.FC = () => {
   ];
 
   return (
-    <AppBar
-      position="sticky"
-      color="default"
-      elevation={0}
-      sx={{
-        backgroundColor: 'white',
-        borderBottom: '1px solid',
-        borderColor: 'rgba(0, 0, 0, 0.08)',
-      }}
-    >
+    <AppBar position="sticky" elevation={4}>
       <Container>
         <Toolbar disableGutters sx={{ py: 1 }}>
           {isMobile && (
@@ -104,48 +80,45 @@ const Header: React.FC = () => {
             sx={{
               fontWeight: 700,
               fontSize: '24px',
-              color: 'primary.main',
+              color: 'primary.light',
               textDecoration: 'none',
               display: 'flex',
               alignItems: 'center',
               mr: 3,
             }}
           >
+            <WavesIcon sx={{ mr: 1, color: 'primary.light' }} />
             AIMS
           </Typography>
 
           {!isMobile && (
             <>
-              <Button color="primary" component={Link} to="/" sx={{ mx: 1 }}>
-                Home
+              <Button
+                color="inherit"
+                component={Link}
+                to="/products"
+                sx={{
+                  mx: 1,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 0.5,
+                }}
+              >
+                <InventoryIcon fontSize="small" />
+                Products
               </Button>
 
               <Button
-                color="primary"
-                endIcon={<ExpandMoreIcon />}
-                onClick={handleCategoryClick}
+                color="inherit"
+                component={Link}
+                to="/about"
                 sx={{ mx: 1 }}
               >
-                Categories
+                About
               </Button>
-              <Menu
-                anchorEl={anchorEl}
-                open={Boolean(anchorEl)}
-                onClose={handleCategoryClose}
-              >
-                {categories.map((category) => (
-                  <MenuItem
-                    key={category.value}
-                    onClick={() => handleCategorySelect(category.value)}
-                  >
-                    <ListItemIcon>{category.icon}</ListItemIcon>
-                    <ListItemText>{category.label}</ListItemText>
-                  </MenuItem>
-                ))}
-              </Menu>
 
               <Button
-                color="primary"
+                color="inherit"
                 component={Link}
                 to="/contact"
                 sx={{ mx: 1 }}
@@ -160,10 +133,10 @@ const Header: React.FC = () => {
           <Box
             sx={{
               position: 'relative',
-              borderRadius: 1,
-              backgroundColor: alpha(theme.palette.common.black, 0.04),
+              borderRadius: 2,
+              backgroundColor: alpha(theme.palette.common.white, 0.08),
               '&:hover': {
-                backgroundColor: alpha(theme.palette.common.black, 0.08),
+                backgroundColor: alpha(theme.palette.common.white, 0.12),
               },
               mr: 2,
               width: { xs: '100%', sm: 'auto' },
@@ -179,7 +152,7 @@ const Header: React.FC = () => {
                 width: '100%',
               }}
             >
-              <IconButton type="submit" sx={{ p: 1 }}>
+              <IconButton type="submit" sx={{ p: 1, color: 'text.secondary' }}>
                 <SearchIcon />
               </IconButton>
               <InputBase
@@ -187,7 +160,7 @@ const Header: React.FC = () => {
                 value={searchQuery}
                 onChange={handleSearchChange}
                 sx={{
-                  color: 'inherit',
+                  color: 'text.primary',
                   width: '100%',
                   '& .MuiInputBase-input': {
                     padding: theme.spacing(1, 1, 1, 0),
@@ -201,7 +174,7 @@ const Header: React.FC = () => {
 
           <Box sx={{ display: 'flex' }}>
             <IconButton
-              color="primary"
+              color="inherit"
               component={Link}
               to="/cart"
               aria-label="cart"
@@ -229,12 +202,27 @@ const Header: React.FC = () => {
         anchor="left"
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
+        PaperProps={{
+          sx: {
+            backgroundImage:
+              'linear-gradient(135deg, #0d2538 0%, #041c2c 100%)',
+            width: 250,
+          },
+        }}
       >
         <Box sx={{ width: 250, pt: 2 }}>
           <Typography
             variant="h6"
-            sx={{ px: 2, mb: 1, fontWeight: 'bold', color: 'primary.main' }}
+            sx={{
+              px: 2,
+              mb: 1,
+              fontWeight: 'bold',
+              color: 'primary.light',
+              display: 'flex',
+              alignItems: 'center',
+            }}
           >
+            <WavesIcon sx={{ mr: 1, color: 'primary.light' }} />
             AIMS Media Store
           </Typography>
           <Divider />
@@ -248,21 +236,38 @@ const Header: React.FC = () => {
               <ListItemText primary="Home" />
             </ListItemButton>
 
+            {/* Main Products link in mobile drawer */}
+            <ListItemButton
+              onClick={() => {
+                navigate('/products');
+                setDrawerOpen(false);
+              }}
+            >
+              <ListItemIcon sx={{ color: 'primary.light' }}>
+                <InventoryIcon />
+              </ListItemIcon>
+              <ListItemText primary="All Products" />
+            </ListItemButton>
+
+            {/* Category filter options in mobile menu */}
             <Divider />
             <Typography
               variant="subtitle2"
               sx={{ px: 2, py: 1, fontWeight: 'bold', color: 'text.secondary' }}
             >
-              Categories
+              Filter By Category
             </Typography>
 
             {categories.map((category) => (
               <ListItemButton
                 key={category.value}
-                onClick={() => handleCategorySelect(category.value)}
+                onClick={() => {
+                  navigate(`/products?category=${category.value}`);
+                  setDrawerOpen(false);
+                }}
                 sx={{ pl: 3 }}
               >
-                <ListItemIcon sx={{ color: 'primary.main' }}>
+                <ListItemIcon sx={{ color: 'primary.light' }}>
                   {category.icon}
                 </ListItemIcon>
                 <ListItemText primary={category.label} />
@@ -272,11 +277,21 @@ const Header: React.FC = () => {
             <Divider />
             <ListItemButton
               onClick={() => {
+                navigate('/contact');
+                setDrawerOpen(false);
+              }}
+            >
+              <ListItemText primary="Contact" />
+            </ListItemButton>
+
+            <Divider />
+            <ListItemButton
+              onClick={() => {
                 navigate('/cart');
                 setDrawerOpen(false);
               }}
             >
-              <ListItemIcon sx={{ color: 'primary.main' }}>
+              <ListItemIcon sx={{ color: 'primary.light' }}>
                 <CartIcon />
               </ListItemIcon>
               <ListItemText primary="Shopping Cart" />
@@ -288,7 +303,7 @@ const Header: React.FC = () => {
                 setDrawerOpen(false);
               }}
             >
-              <ListItemIcon sx={{ color: 'primary.main' }}>
+              <ListItemIcon sx={{ color: 'primary.light' }}>
                 <PersonIcon />
               </ListItemIcon>
               <ListItemText primary="Login" />

@@ -1,21 +1,18 @@
 // src/pages/customer/HomePage.tsx
 import React, { useState, useEffect } from 'react';
-import { Box, Container, Typography, Button } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import { Box, Container, Typography, Divider } from '@mui/material';
 import { Product } from '../../types';
 import Newsletter from '../../components/common/Newsletter';
 import { mockApiService } from '../../mock/mockApi';
 import ProductGrid from '../../components/product/ProductGrid';
 import CategoryBanner from '../../components/common/CategoryBanner';
-
-// Import the image directly
-import heroImage from '../../assets/aim.jpg';
+import { Waves as WavesIcon } from '@mui/icons-material';
+import Banner from '../../components/common/Banner';
 
 const HomePage: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
-  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -49,97 +46,127 @@ const HomePage: React.FC = () => {
   };
 
   if (loading) {
-    return <Box sx={{ p: 5, textAlign: 'center' }}>Loading...</Box>;
+    return (
+      <Box
+        sx={{
+          p: 5,
+          textAlign: 'center',
+          height: '70vh',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          flexDirection: 'column',
+          gap: 2,
+        }}
+      >
+        <WavesIcon
+          sx={{
+            fontSize: 60,
+            color: 'primary.light',
+            animation: 'pulse 2s infinite',
+            '@keyframes pulse': {
+              '0%': {
+                transform: 'scale(0.95)',
+                opacity: 0.7,
+              },
+              '70%': {
+                transform: 'scale(1.1)',
+                opacity: 1,
+              },
+              '100%': {
+                transform: 'scale(0.95)',
+                opacity: 0.7,
+              },
+            },
+          }}
+        />
+        <Typography
+          variant="h5"
+          sx={{
+            color: 'text.secondary',
+            fontWeight: 'medium',
+          }}
+        >
+          Diving into our deep ocean collection...
+        </Typography>
+      </Box>
+    );
   }
 
   return (
-    <Box>
+    <Box sx={{ overflow: 'hidden' }}>
       {/* Enhanced Hero Banner */}
+      <Banner />
+
+      {/* Category Banners */}
       <Box
         sx={{
-          height: { xs: '60vh', md: '70vh' },
+          py: { xs: 6, md: 8 },
           position: 'relative',
-          display: 'flex',
-          alignItems: 'center',
           overflow: 'hidden',
           '&::before': {
             content: '""',
             position: 'absolute',
             top: 0,
             left: 0,
-            width: '100%',
-            height: '100%',
-            backgroundImage: `url(${heroImage})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            filter: 'brightness(0.6)',
-            zIndex: -1,
+            right: 0,
+            bottom: 0,
+            backgroundImage:
+              'radial-gradient(circle at 20% 50%, rgba(2, 136, 209, 0.05) 0%, transparent 50%), radial-gradient(circle at 80% 70%, rgba(100, 255, 218, 0.05) 0%, transparent 50%)',
+            zIndex: 1,
           },
         }}
       >
-        <Container maxWidth="lg" sx={{ mr: 1 }}>
-          <Box
-            sx={{
-              maxWidth: 650,
-              backgroundColor: 'rgba(0, 0, 0, 0.6)',
-              p: { xs: 4, md: 5 },
-              borderRadius: 2,
-              ml: { xs: 0, md: 4 },
-              backdropFilter: 'blur(8px)',
-            }}
-          >
-            <Typography
-              variant="h1"
-              sx={{
-                fontWeight: 'bold',
-                mb: 2,
-                color: 'white',
-                fontSize: { xs: '2.5rem', md: '3.5rem' },
-                lineHeight: 1.2,
-              }}
-            >
-              AIMS Media Store
-            </Typography>
-            <Typography
-              variant="h6"
-              sx={{
-                mb: 4,
-                color: 'rgba(255, 255, 255, 0.9)',
-                lineHeight: 1.6,
-              }}
-            >
-              Discover our collection of high-quality books, CDs, LP records,
-              and DVDs. Shop for the best physical media products.
-            </Typography>
-            <Button
-              variant="contained"
-              color="primary"
-              size="large"
-              onClick={() => navigate('/products')}
-              sx={{
-                px: 4,
-                py: 1.5,
-                fontSize: '1.1rem',
-                boxShadow: '0 4px 10px rgba(0, 82, 204, 0.3)',
-                '&:hover': {
-                  boxShadow: '0 6px 12px rgba(0, 82, 204, 0.4)',
-                },
-              }}
-            >
-              Shop Now
-            </Button>
-          </Box>
+        <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 2 }}>
+          <CategoryBanner />
         </Container>
       </Box>
 
-      {/* Category Banners */}
-      <Container maxWidth="lg" sx={{ py: { xs: 6, md: 8 } }}>
-        <CategoryBanner />
-      </Container>
+      <Divider
+        sx={{
+          borderColor: 'rgba(100, 255, 218, 0.1)',
+          width: '80%',
+          mx: 'auto',
+        }}
+      />
 
       {/* Featured Products */}
-      <Box sx={{ py: { xs: 6, md: 8 }, backgroundColor: '#f8f9fa' }}>
-        <Container maxWidth="lg">
+      <Box
+        sx={{
+          py: { xs: 6, md: 8 },
+          position: 'relative',
+          overflow: 'hidden',
+          '&::before': {
+            content: '""',
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundImage:
+              'linear-gradient(135deg, rgba(1, 22, 39, 0.6) 0%, rgba(4, 28, 44, 0.4) 100%)',
+            zIndex: 1,
+          },
+          '&::after': {
+            content: '""',
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundImage:
+              'radial-gradient(circle at 30% 20%, rgba(100, 255, 218, 0.05) 0%, transparent 50%), radial-gradient(circle at 70% 80%, rgba(2, 136, 209, 0.05) 0%, transparent 50%)',
+            zIndex: 2,
+          },
+        }}
+      >
+        <Container
+          maxWidth="lg"
+          sx={{
+            position: 'relative',
+            zIndex: 3,
+          }}
+        >
           <ProductGrid
             products={products}
             title="Featured Products"

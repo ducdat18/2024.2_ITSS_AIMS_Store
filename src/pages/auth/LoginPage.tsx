@@ -18,6 +18,8 @@ import {
   VisibilityOff,
   Person as PersonIcon,
   Lock as LockIcon,
+  ChevronLeft as ChevronLeftIcon,
+  Waves as WavesIcon,
 } from '@mui/icons-material';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 
@@ -96,47 +98,147 @@ const LoginPage: React.FC = () => {
   };
 
   return (
-    <>
-      <Box sx={{ position: 'relative' }}>
-        <Box sx={{ position: 'absolute', top: 16, left: 16 }}>
-          <Button
-            component={RouterLink}
-            to="/"
-            startIcon={
-              <Typography sx={{ fontWeight: 'bold', fontSize: '24px' }}>
-                ←
-              </Typography>
-            }
-            variant="text"
-            color="primary"
-            sx={{ textTransform: 'none' }}
-          >
-            Back to Home
-          </Button>
-        </Box>
+    <Box
+      sx={{
+        py: { xs: 4, md: 5 },
+        position: 'relative',
+        overflow: 'hidden',
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        '&::before': {
+          content: '""',
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundImage:
+            'radial-gradient(circle at 20% 30%, rgba(2, 136, 209, 0.05) 0%, transparent 50%), radial-gradient(circle at 80% 70%, rgba(100, 255, 218, 0.05) 0%, transparent 50%)',
+          zIndex: 1,
+        },
+      }}
+    >
+      <Box
+        sx={{
+          position: 'absolute',
+          top: 16,
+          left: 16,
+          zIndex: 5,
+        }}
+      >
+        <Button
+          component={RouterLink}
+          to="/"
+          startIcon={<ChevronLeftIcon />}
+          variant="text"
+          color="primary"
+          sx={{
+            textTransform: 'none',
+            color: 'primary.light',
+            '&:hover': {
+              backgroundColor: 'rgba(100, 255, 218, 0.05)',
+            },
+          }}
+        >
+          Back to Home
+        </Button>
       </Box>
-      <Container maxWidth="sm" sx={{ py: 8 }}>
-        <Paper elevation={3} sx={{ borderRadius: 2, overflow: 'hidden' }}>
-          <Box sx={{ p: 0.5, bgcolor: 'primary.main' }} />
-          <Box sx={{ px: 4, py: 5 }}>
-            <Typography
-              variant="h4"
-              component="h1"
-              align="center"
-              color="secondary.main"
-              sx={{ mb: 4, fontWeight: 'bold' }}
+
+      <Container
+        maxWidth="sm"
+        sx={{
+          position: 'relative',
+          zIndex: 2,
+        }}
+      >
+        <Paper
+          elevation={4}
+          sx={{
+            borderRadius: 2,
+            overflow: 'hidden',
+            backgroundImage:
+              'linear-gradient(135deg, #0d2538 0%, #041c2c 100%)',
+            border: '1px solid rgba(100, 255, 218, 0.1)',
+            position: 'relative',
+          }}
+        >
+          <Box
+            sx={{
+              p: 0.5,
+              backgroundImage: 'linear-gradient(90deg, #0288d1, #005b9f)',
+            }}
+          />
+
+          <Box
+            sx={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              height: '100%',
+              backgroundImage:
+                'radial-gradient(circle at 50% 15%, rgba(2, 136, 209, 0.08) 0%, transparent 60%)',
+              opacity: 0.8,
+              zIndex: 1,
+            }}
+          />
+
+          <Box sx={{ px: 4, py: 5, position: 'relative', zIndex: 2 }}>
+            <Box
+              sx={{
+                textAlign: 'center',
+                mb: 4,
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+              }}
             >
-              Login to AIMS
-            </Typography>
+              <WavesIcon
+                sx={{
+                  fontSize: 40,
+                  color: 'primary.light',
+                  mb: 1,
+                }}
+              />
+              <Typography
+                variant="h4"
+                component="h1"
+                align="center"
+                sx={{
+                  fontWeight: 'bold',
+                  backgroundImage: 'linear-gradient(45deg, #64ffda, #0288d1)',
+                  backgroundClip: 'text',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  textShadow: '0 5px 25px rgba(100, 255, 218, 0.2)',
+                }}
+              >
+                Login to AIMS
+              </Typography>
+              <Typography color="text.secondary" sx={{ mt: 1 }}>
+                Dive into your ocean of media
+              </Typography>
+            </Box>
 
             {loginError && (
-              <Alert severity="error" sx={{ mb: 3 }}>
+              <Alert
+                severity="error"
+                sx={{
+                  mb: 3,
+                  backgroundColor: 'rgba(255, 82, 82, 0.1)',
+                  border: '1px solid rgba(255, 82, 82, 0.3)',
+                  '& .MuiAlert-icon': {
+                    color: 'error.main',
+                  },
+                }}
+              >
                 {loginError}
               </Alert>
             )}
 
             <Box component="form" onSubmit={handleSubmit}>
-              <Grid2 container spacing={2}>
+              <Grid2 container spacing={3}>
                 <Grid2 size={{ xs: 12 }}>
                   <TextField
                     fullWidth
@@ -147,16 +249,33 @@ const LoginPage: React.FC = () => {
                     onChange={handleChange}
                     error={!!errors.email}
                     helperText={errors.email}
-                    slotProps={{
-                      input: {
-                        startAdornment: (
-                          <InputAdornment position="start">
-                            <PersonIcon color="primary" />
-                          </InputAdornment>
-                        ),
-                      },
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <PersonIcon
+                            sx={{ color: 'rgba(100, 255, 218, 0.7)' }}
+                          />
+                        </InputAdornment>
+                      ),
                     }}
                     required
+                    sx={{
+                      '& .MuiOutlinedInput-root': {
+                        backgroundColor: 'rgba(1, 22, 39, 0.3)',
+                        '&:hover': {
+                          backgroundColor: 'rgba(1, 22, 39, 0.5)',
+                        },
+                        '& fieldset': {
+                          borderColor: 'rgba(100, 255, 218, 0.3)',
+                        },
+                        '&:hover fieldset': {
+                          borderColor: 'rgba(100, 255, 218, 0.5)',
+                        },
+                        '&.Mui-focused fieldset': {
+                          borderColor: 'rgba(100, 255, 218, 0.7)',
+                        },
+                      },
+                    }}
                   />
                 </Grid2>
 
@@ -170,30 +289,49 @@ const LoginPage: React.FC = () => {
                     onChange={handleChange}
                     error={!!errors.password}
                     helperText={errors.password}
-                    slotProps={{
-                      input: {
-                        startAdornment: (
-                          <InputAdornment position="start">
-                            <LockIcon color="primary" />
-                          </InputAdornment>
-                        ),
-                        endAdornment: (
-                          <InputAdornment position="end">
-                            <IconButton
-                              onClick={() => setShowPassword(!showPassword)}
-                              edge="end"
-                            >
-                              {showPassword ? (
-                                <VisibilityOff />
-                              ) : (
-                                <Visibility />
-                              )}
-                            </IconButton>
-                          </InputAdornment>
-                        ),
-                      },
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <LockIcon
+                            sx={{ color: 'rgba(100, 255, 218, 0.7)' }}
+                          />
+                        </InputAdornment>
+                      ),
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton
+                            onClick={() => setShowPassword(!showPassword)}
+                            edge="end"
+                            sx={{
+                              color: 'rgba(100, 255, 218, 0.7)',
+                              '&:hover': {
+                                backgroundColor: 'rgba(100, 255, 218, 0.05)',
+                              },
+                            }}
+                          >
+                            {showPassword ? <VisibilityOff /> : <Visibility />}
+                          </IconButton>
+                        </InputAdornment>
+                      ),
                     }}
                     required
+                    sx={{
+                      '& .MuiOutlinedInput-root': {
+                        backgroundColor: 'rgba(1, 22, 39, 0.3)',
+                        '&:hover': {
+                          backgroundColor: 'rgba(1, 22, 39, 0.5)',
+                        },
+                        '& fieldset': {
+                          borderColor: 'rgba(100, 255, 218, 0.3)',
+                        },
+                        '&:hover fieldset': {
+                          borderColor: 'rgba(100, 255, 218, 0.5)',
+                        },
+                        '&.Mui-focused fieldset': {
+                          borderColor: 'rgba(100, 255, 218, 0.7)',
+                        },
+                      },
+                    }}
                   />
                 </Grid2>
 
@@ -204,7 +342,26 @@ const LoginPage: React.FC = () => {
                     variant="contained"
                     color="primary"
                     size="large"
-                    sx={{ py: 1.5 }}
+                    sx={{
+                      py: 1.5,
+                      mt: 1,
+                      position: 'relative',
+                      overflow: 'hidden',
+                      '&::after': {
+                        content: '""',
+                        position: 'absolute',
+                        top: 0,
+                        left: '-100%',
+                        width: '100%',
+                        height: '100%',
+                        background:
+                          'linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)',
+                        transition: 'all 0.6s',
+                      },
+                      '&:hover::after': {
+                        left: '100%',
+                      },
+                    }}
                   >
                     Sign In
                   </Button>
@@ -212,14 +369,28 @@ const LoginPage: React.FC = () => {
               </Grid2>
             </Box>
 
-            <Divider sx={{ my: 4 }}>
-              <Typography variant="body2" color="text.secondary">
+            <Divider
+              sx={{
+                my: 4,
+                borderColor: 'rgba(100, 255, 218, 0.1)',
+                '&::before, &::after': {
+                  borderColor: 'rgba(100, 255, 218, 0.1)',
+                },
+              }}
+            >
+              <Typography
+                variant="body2"
+                sx={{
+                  color: 'rgba(100, 255, 218, 0.5)',
+                  px: 1,
+                }}
+              >
                 OR
               </Typography>
             </Divider>
 
             <Box sx={{ textAlign: 'center' }}>
-              <Typography variant="body1" gutterBottom>
+              <Typography variant="body1" gutterBottom color="text.secondary">
                 Don't have an account?
               </Typography>
               <Button
@@ -227,15 +398,37 @@ const LoginPage: React.FC = () => {
                 to="/register"
                 variant="outlined"
                 color="primary"
-                sx={{ mt: 1, px: 4 }}
+                sx={{
+                  mt: 1,
+                  px: 4,
+                  borderColor: 'rgba(100, 255, 218, 0.3)',
+                  '&:hover': {
+                    borderColor: 'rgba(100, 255, 218, 0.5)',
+                    backgroundColor: 'rgba(100, 255, 218, 0.05)',
+                  },
+                }}
               >
                 Register Now
               </Button>
             </Box>
           </Box>
         </Paper>
+
+        <Box
+          sx={{
+            textAlign: 'center',
+            mt: 3,
+            color: 'text.secondary',
+            fontSize: '0.8rem',
+          }}
+        >
+          <Typography variant="caption">
+            © {new Date().getFullYear()} AIMS - An Internet Media Store. All
+            Rights Reserved.
+          </Typography>
+        </Box>
       </Container>
-    </>
+    </Box>
   );
 };
 

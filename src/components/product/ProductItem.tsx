@@ -14,6 +14,8 @@ import {
   Album as CDIcon,
   Radio as LPIcon,
   MovieCreation as DVDIcon,
+  Visibility as VisibilityIcon,
+  ShoppingCart as CartIcon,
 } from '@mui/icons-material';
 import { ProductCategory, Product } from '../../types';
 import { formatCurrency } from '../../utils/formatters';
@@ -29,15 +31,15 @@ const ProductItem: React.FC<ProductItemProps> = ({ product, onAddToCart }) => {
   const getCategoryIcon = () => {
     switch (product.category) {
       case ProductCategory.BOOK:
-        return <BookIcon sx={{ fontSize: 60 }} />;
+        return <BookIcon sx={{ fontSize: 60, color: '#64ffda' }} />;
       case ProductCategory.CD:
-        return <CDIcon sx={{ fontSize: 60 }} />;
+        return <CDIcon sx={{ fontSize: 60, color: '#64ffda' }} />;
       case ProductCategory.LP:
-        return <LPIcon sx={{ fontSize: 60 }} />;
+        return <LPIcon sx={{ fontSize: 60, color: '#64ffda' }} />;
       case ProductCategory.DVD:
-        return <DVDIcon sx={{ fontSize: 60 }} />;
+        return <DVDIcon sx={{ fontSize: 60, color: '#64ffda' }} />;
       default:
-        return <BookIcon sx={{ fontSize: 60 }} />;
+        return <BookIcon sx={{ fontSize: 60, color: '#64ffda' }} />;
     }
   };
 
@@ -80,10 +82,7 @@ const ProductItem: React.FC<ProductItemProps> = ({ product, onAddToCart }) => {
     }
 
     return (
-      <Typography
-        variant="h6"
-        sx={{ fontWeight: 500, color: 'text.secondary' }}
-      >
+      <Typography variant="h6" sx={{ fontWeight: 500, color: 'primary.light' }}>
         {formatCurrency(product.price)}
       </Typography>
     );
@@ -91,7 +90,7 @@ const ProductItem: React.FC<ProductItemProps> = ({ product, onAddToCart }) => {
 
   return (
     <Card
-      elevation={0}
+      elevation={3}
       sx={{
         height: '100%',
         display: 'flex',
@@ -99,12 +98,19 @@ const ProductItem: React.FC<ProductItemProps> = ({ product, onAddToCart }) => {
         position: 'relative',
         transform: 'translateY(0)',
         transition: 'all 0.3s',
+        overflow: 'hidden',
+        backgroundImage: 'linear-gradient(135deg, #0d2538 0%, #041c2c 100%)',
         '&:hover': {
           transform: 'translateY(-5px)',
-          boxShadow: '0 5px 15px rgba(0,0,0,0.1)',
+          boxShadow: '0 15px 25px rgba(0, 0, 0, 0.6)',
           '& .hover-content': {
             opacity: 1,
             bottom: 30,
+          },
+          '& .thumb': {
+            '&::after': {
+              opacity: 0.9,
+            },
           },
         },
       }}
@@ -115,7 +121,21 @@ const ProductItem: React.FC<ProductItemProps> = ({ product, onAddToCart }) => {
           position: 'relative',
           textAlign: 'center',
           p: 3,
-          backgroundColor: '#f8f8f8',
+          backgroundColor: 'rgba(2, 136, 209, 0.05)',
+          overflow: 'hidden',
+          '&::after': {
+            content: '""',
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            backgroundImage:
+              'linear-gradient(135deg, rgba(2, 136, 209, 0.4) 0%, rgba(0, 44, 77, 0.4) 100%)',
+            opacity: 0,
+            transition: 'opacity 0.5s ease',
+            zIndex: 1,
+          },
         }}
       >
         {product.discount && (
@@ -128,6 +148,7 @@ const ProductItem: React.FC<ProductItemProps> = ({ product, onAddToCart }) => {
               top: 10,
               right: 10,
               fontWeight: 'bold',
+              zIndex: 2,
             }}
           />
         )}
@@ -165,48 +186,32 @@ const ProductItem: React.FC<ProductItemProps> = ({ product, onAddToCart }) => {
                 height: 50,
                 p: 0,
                 borderRadius: '50%',
+                boxShadow: '0 5px 15px rgba(0, 0, 0, 0.3)',
               }}
               onClick={() => navigate(`/product/${product.id}`)}
             >
-              <Box
-                sx={{
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  height: '100%',
-                }}
-              >
-                👁️
-              </Box>
+              <VisibilityIcon />
             </Button>
             <Button
               variant="contained"
-              color="primary"
+              color="secondary"
               sx={{
                 minWidth: 'auto',
                 width: 50,
                 height: 50,
                 p: 0,
                 borderRadius: '50%',
+                boxShadow: '0 5px 15px rgba(0, 0, 0, 0.3)',
               }}
               onClick={() => onAddToCart(product)}
             >
-              <Box
-                sx={{
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  height: '100%',
-                }}
-              >
-                🛒
-              </Box>
+              <CartIcon />
             </Button>
           </Box>
         </Box>
       </Box>
 
-      <CardContent sx={{ flexGrow: 1, pt: 3 }}>
+      <CardContent sx={{ flexGrow: 1, pt: 3, zIndex: 2 }}>
         <Typography
           variant="h5"
           component="h3"
@@ -221,6 +226,7 @@ const ProductItem: React.FC<ProductItemProps> = ({ product, onAddToCart }) => {
             WebkitBoxOrient: 'vertical',
             height: 48,
             lineHeight: 1.3,
+            color: 'text.primary',
           }}
         >
           {product.title}

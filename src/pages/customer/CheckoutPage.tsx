@@ -21,6 +21,22 @@ import {
   Grid2,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import {
+  LocalShipping as LocalShippingIcon,
+  Payment as PaymentIcon,
+  Person as PersonIcon,
+  Email as EmailIcon,
+  Phone as PhoneIcon,
+  LocationOn as LocationIcon,
+  Today as TodayIcon,
+  Notes as NotesIcon,
+  ArrowBack as ArrowBackIcon,
+  ArrowForward as ArrowForwardIcon,
+  CreditCard as CreditCardIcon,
+  Waves as WavesIcon,
+  Info as InfoIcon,
+} from '@mui/icons-material';
+import { styled } from '@mui/material/styles';
 import { Product } from '../../types';
 import { formatCurrency } from '../../utils/formatters';
 import { mockApiService } from '../../mock/mockApi';
@@ -52,6 +68,32 @@ const vietnamProvinces = [
   'Can Tho',
   // More provinces would be included here
 ];
+
+// Custom styled component for the Stepper
+const OceanStepper = styled(Stepper)(({ theme }) => ({
+  '& .MuiStepLabel-root .Mui-active': {
+    color: theme.palette.primary.light,
+  },
+  '& .MuiStepLabel-root .Mui-completed': {
+    color: theme.palette.primary.light,
+  },
+  '& .MuiStepLabel-label': {
+    color: theme.palette.text.secondary,
+  },
+  '& .MuiStepLabel-label.Mui-active': {
+    color: theme.palette.primary.light,
+    fontWeight: 'bold',
+  },
+  '& .MuiStepConnector-line': {
+    borderColor: 'rgba(100, 255, 218, 0.2)',
+  },
+  '& .MuiStepConnector-root.Mui-active .MuiStepConnector-line': {
+    borderColor: theme.palette.primary.light,
+  },
+  '& .MuiStepConnector-root.Mui-completed .MuiStepConnector-line': {
+    borderColor: theme.palette.primary.light,
+  },
+}));
 
 const CheckoutPage: React.FC = () => {
   const navigate = useNavigate();
@@ -244,17 +286,6 @@ const CheckoutPage: React.FC = () => {
         const hour = deliveryDate.getHours();
         const isBusinessHours = hour >= 8 && hour < 20;
 
-        console.log('Current time:', new Date().toLocaleString());
-        console.log('Delivery time:', deliveryDate.toLocaleString());
-        console.log(
-          'Min allowed time:',
-          new Date(minAllowedTime).toLocaleString()
-        );
-        console.log(
-          'Is at least 2 hours ahead?',
-          deliveryTime >= minAllowedTime
-        );
-
         if (deliveryTime < minAllowedTime) {
           errors.rushDeliveryTime =
             'Delivery time must be at least 2 hours from now';
@@ -316,507 +347,1223 @@ const CheckoutPage: React.FC = () => {
   const steps = ['Delivery Information', 'Review & Payment'];
 
   if (loading) {
-    return <Box sx={{ p: 5, textAlign: 'center' }}>Loading...</Box>;
+    return (
+      <Box
+        sx={{
+          p: 5,
+          textAlign: 'center',
+          height: '70vh',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          flexDirection: 'column',
+          gap: 2,
+        }}
+      >
+        <WavesIcon
+          sx={{
+            fontSize: 60,
+            color: 'primary.light',
+            animation: 'pulse 2s infinite',
+            '@keyframes pulse': {
+              '0%': {
+                transform: 'scale(0.95)',
+                opacity: 0.7,
+              },
+              '70%': {
+                transform: 'scale(1.1)',
+                opacity: 1,
+              },
+              '100%': {
+                transform: 'scale(0.95)',
+                opacity: 0.7,
+              },
+            },
+          }}
+        />
+        <Typography
+          variant="h5"
+          sx={{
+            color: 'text.secondary',
+            fontWeight: 'medium',
+          }}
+        >
+          Preparing your checkout experience...
+        </Typography>
+      </Box>
+    );
   }
 
   return (
-    <Container maxWidth="lg" sx={{ py: 5 }}>
-      <Typography
-        variant="h4"
-        component="h1"
-        gutterBottom
-        color="secondary.main"
+    <Box
+      sx={{
+        py: { xs: 4, md: 5 },
+        position: 'relative',
+        overflow: 'hidden',
+        minHeight: '80vh',
+        '&::before': {
+          content: '""',
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundImage:
+            'radial-gradient(circle at 20% 30%, rgba(2, 136, 209, 0.05) 0%, transparent 50%), radial-gradient(circle at 80% 70%, rgba(100, 255, 218, 0.05) 0%, transparent 50%)',
+          zIndex: 1,
+        },
+      }}
+    >
+      <Container
+        maxWidth="lg"
+        sx={{
+          position: 'relative',
+          zIndex: 2,
+        }}
       >
-        Checkout
-      </Typography>
+        <Typography
+          variant="h4"
+          component="h1"
+          gutterBottom
+          sx={{
+            fontWeight: 'bold',
+            color: 'primary.light',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 1.5,
+            mb: 4,
+            position: 'relative',
+            '&::after': {
+              content: '""',
+              position: 'absolute',
+              bottom: -8,
+              left: 0,
+              width: 60,
+              height: 3,
+              background:
+                'linear-gradient(90deg, rgba(100, 255, 218, 0.7), rgba(100, 255, 218, 0.1))',
+              borderRadius: 2,
+            },
+          }}
+        >
+          <PaymentIcon /> Checkout
+        </Typography>
 
-      <Stepper activeStep={activeStep} sx={{ mb: 4 }}>
-        {steps.map((label) => (
-          <Step key={label}>
-            <StepLabel>{label}</StepLabel>
-          </Step>
-        ))}
-      </Stepper>
+        <OceanStepper activeStep={activeStep} sx={{ mb: 5 }} alternativeLabel>
+          {steps.map((label, index) => (
+            <Step key={label}>
+              <StepLabel
+                StepIconProps={{
+                  icon: index === 0 ? <LocalShippingIcon /> : <PaymentIcon />,
+                }}
+              >
+                {label}
+              </StepLabel>
+            </Step>
+          ))}
+        </OceanStepper>
 
-      {activeStep === 0 && (
-        <Grid2 container spacing={4}>
-          <Grid2 size={{ xs: 12, md: 7 }}>
-            <Paper sx={{ p: 3, mb: 3 }}>
-              <Typography variant="h5" gutterBottom>
-                Delivery Information
-              </Typography>
-              <Divider sx={{ mb: 3 }} />
-
-              <Grid2 container spacing={2}>
-                <Grid2 size={{ xs: 12 }}>
-                  <TextField
-                    fullWidth
-                    label="Recipient Name"
-                    name="recipientName"
-                    value={deliveryInfo.recipientName}
-                    onChange={handleInputChange}
-                    error={!!formErrors.recipientName}
-                    helperText={formErrors.recipientName}
-                    required
-                  />
-                </Grid2>
-                <Grid2 size={{ xs: 12, sm: 6 }}>
-                  <TextField
-                    fullWidth
-                    label="Email"
-                    name="email"
-                    type="email"
-                    value={deliveryInfo.email}
-                    onChange={handleInputChange}
-                    error={!!formErrors.email}
-                    helperText={formErrors.email}
-                    required
-                  />
-                </Grid2>
-                <Grid2 size={{ xs: 12, sm: 6 }}>
-                  <TextField
-                    fullWidth
-                    label="Phone Number"
-                    name="phone"
-                    value={deliveryInfo.phone}
-                    onChange={handleInputChange}
-                    error={!!formErrors.phone}
-                    helperText={formErrors.phone}
-                    required
-                  />
-                </Grid2>
-                <Grid2 size={{ xs: 12 }}>
-                  <TextField
-                    select
-                    fullWidth
-                    label="Province/City"
-                    name="province"
-                    value={deliveryInfo.province}
-                    onChange={handleInputChange}
-                    error={!!formErrors.province}
-                    helperText={formErrors.province}
-                    required
+        {activeStep === 0 && (
+          <Grid2 container spacing={4}>
+            <Grid2 size={{ xs: 12, md: 7 }}>
+              <Paper
+                sx={{
+                  p: 4,
+                  mb: 3,
+                  backgroundImage:
+                    'linear-gradient(135deg, #0d2538 0%, #041c2c 100%)',
+                  borderRadius: 2,
+                  border: '1px solid rgba(100, 255, 218, 0.1)',
+                  position: 'relative',
+                  overflow: 'hidden',
+                  '&::after': {
+                    content: '""',
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: '100%',
+                    backgroundImage:
+                      'radial-gradient(circle at 50% 0%, rgba(2, 136, 209, 0.08) 0%, transparent 70%)',
+                    opacity: 0.8,
+                    zIndex: 1,
+                  },
+                }}
+                elevation={3}
+              >
+                <Box sx={{ position: 'relative', zIndex: 2 }}>
+                  <Typography
+                    variant="h5"
+                    gutterBottom
+                    sx={{
+                      color: 'primary.light',
+                      fontWeight: 'bold',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 1,
+                    }}
                   >
-                    {vietnamProvinces.map((province) => (
-                      <MenuItem key={province} value={province}>
-                        {province}
-                      </MenuItem>
-                    ))}
-                  </TextField>
-                </Grid2>
-                <Grid2 size={{ xs: 12 }}>
-                  <TextField
-                    fullWidth
-                    label="Address"
-                    name="address"
-                    value={deliveryInfo.address}
-                    onChange={handleInputChange}
-                    error={!!formErrors.address}
-                    helperText={formErrors.address}
-                    required
-                    multiline
-                    rows={2}
+                    <LocalShippingIcon fontSize="small" />
+                    Delivery Information
+                  </Typography>
+                  <Divider
+                    sx={{ mb: 3, borderColor: 'rgba(100, 255, 218, 0.1)' }}
                   />
-                </Grid2>
 
-                {isHanoi && (
-                  <Grid2 size={{ xs: 12 }}>
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          checked={deliveryInfo.isRushDelivery}
-                          onChange={handleCheckboxChange}
-                          disabled={!canUseRushDelivery}
-                          color="primary"
-                        />
-                      }
-                      label="Rush Delivery (2-hour delivery timeframe)"
-                    />
-                    {!canUseRushDelivery && (
-                      <Typography
-                        variant="caption"
-                        color="text.secondary"
-                        display="block"
-                      >
-                        Some items in your cart are not eligible for rush
-                        delivery (items over 3kg).
-                      </Typography>
-                    )}
-                    {deliveryInfo.isRushDelivery && (
-                      <Typography
-                        variant="caption"
-                        color="text.secondary"
-                        display="block"
-                      >
-                        Rush delivery is only available in Hanoi districts for
-                        eligible items. You must select a delivery time at least
-                        2 hours from now, between 8 AM and 8 PM. An additional
-                        fee of 10,000 VND per eligible item will be applied.
-                      </Typography>
-                    )}
-                  </Grid2>
-                )}
-
-                {deliveryInfo.isRushDelivery && (
-                  <>
-                    <Grid2 size={{ xs: 12, sm: 6 }}>
+                  <Grid2 container spacing={3}>
+                    <Grid2 size={{ xs: 12 }}>
                       <TextField
                         fullWidth
-                        label="Preferred Delivery Time"
-                        name="rushDeliveryTime"
-                        type="datetime-local"
-                        value={deliveryInfo.rushDeliveryTime}
+                        label="Recipient Name"
+                        name="recipientName"
+                        value={deliveryInfo.recipientName}
                         onChange={handleInputChange}
-                        InputLabelProps={{ shrink: true }}
-                        error={!!formErrors.rushDeliveryTime}
-                        helperText={
-                          formErrors.rushDeliveryTime ||
-                          'Select a time at least 2 hours from now (8 AM - 8 PM)'
-                        }
+                        error={!!formErrors.recipientName}
+                        helperText={formErrors.recipientName}
                         required
+                        InputProps={{
+                          startAdornment: (
+                            <PersonIcon
+                              sx={{ mr: 1, color: 'rgba(100, 255, 218, 0.5)' }}
+                            />
+                          ),
+                        }}
+                        sx={{
+                          '& .MuiOutlinedInput-root': {
+                            backgroundColor: 'rgba(1, 22, 39, 0.3)',
+                            '&:hover': {
+                              backgroundColor: 'rgba(1, 22, 39, 0.5)',
+                            },
+                            '& fieldset': {
+                              borderColor: 'rgba(100, 255, 218, 0.3)',
+                            },
+                            '&:hover fieldset': {
+                              borderColor: 'rgba(100, 255, 218, 0.5)',
+                            },
+                            '&.Mui-focused fieldset': {
+                              borderColor: 'rgba(100, 255, 218, 0.7)',
+                            },
+                          },
+                        }}
                       />
                     </Grid2>
                     <Grid2 size={{ xs: 12, sm: 6 }}>
                       <TextField
                         fullWidth
-                        label="Delivery Instructions"
-                        name="rushDeliveryInstructions"
-                        value={deliveryInfo.rushDeliveryInstructions || ''}
+                        label="Email"
+                        name="email"
+                        type="email"
+                        value={deliveryInfo.email}
                         onChange={handleInputChange}
-                        placeholder="Special instructions for delivery"
+                        error={!!formErrors.email}
+                        helperText={formErrors.email}
+                        required
+                        InputProps={{
+                          startAdornment: (
+                            <EmailIcon
+                              sx={{ mr: 1, color: 'rgba(100, 255, 218, 0.5)' }}
+                            />
+                          ),
+                        }}
+                        sx={{
+                          '& .MuiOutlinedInput-root': {
+                            backgroundColor: 'rgba(1, 22, 39, 0.3)',
+                            '&:hover': {
+                              backgroundColor: 'rgba(1, 22, 39, 0.5)',
+                            },
+                            '& fieldset': {
+                              borderColor: 'rgba(100, 255, 218, 0.3)',
+                            },
+                            '&:hover fieldset': {
+                              borderColor: 'rgba(100, 255, 218, 0.5)',
+                            },
+                            '&.Mui-focused fieldset': {
+                              borderColor: 'rgba(100, 255, 218, 0.7)',
+                            },
+                          },
+                        }}
+                      />
+                    </Grid2>
+                    <Grid2 size={{ xs: 12, sm: 6 }}>
+                      <TextField
+                        fullWidth
+                        label="Phone Number"
+                        name="phone"
+                        value={deliveryInfo.phone}
+                        onChange={handleInputChange}
+                        error={!!formErrors.phone}
+                        helperText={formErrors.phone}
+                        required
+                        InputProps={{
+                          startAdornment: (
+                            <PhoneIcon
+                              sx={{ mr: 1, color: 'rgba(100, 255, 218, 0.5)' }}
+                            />
+                          ),
+                        }}
+                        sx={{
+                          '& .MuiOutlinedInput-root': {
+                            backgroundColor: 'rgba(1, 22, 39, 0.3)',
+                            '&:hover': {
+                              backgroundColor: 'rgba(1, 22, 39, 0.5)',
+                            },
+                            '& fieldset': {
+                              borderColor: 'rgba(100, 255, 218, 0.3)',
+                            },
+                            '&:hover fieldset': {
+                              borderColor: 'rgba(100, 255, 218, 0.5)',
+                            },
+                            '&.Mui-focused fieldset': {
+                              borderColor: 'rgba(100, 255, 218, 0.7)',
+                            },
+                          },
+                        }}
+                      />
+                    </Grid2>
+                    <Grid2 size={{ xs: 12 }}>
+                      <TextField
+                        select
+                        fullWidth
+                        label="Province/City"
+                        name="province"
+                        value={deliveryInfo.province}
+                        onChange={handleInputChange}
+                        error={!!formErrors.province}
+                        helperText={formErrors.province}
+                        required
+                        InputProps={{
+                          startAdornment: (
+                            <LocationIcon
+                              sx={{ mr: 1, color: 'rgba(100, 255, 218, 0.5)' }}
+                            />
+                          ),
+                        }}
+                        sx={{
+                          '& .MuiOutlinedInput-root': {
+                            backgroundColor: 'rgba(1, 22, 39, 0.3)',
+                            '&:hover': {
+                              backgroundColor: 'rgba(1, 22, 39, 0.5)',
+                            },
+                            '& fieldset': {
+                              borderColor: 'rgba(100, 255, 218, 0.3)',
+                            },
+                            '&:hover fieldset': {
+                              borderColor: 'rgba(100, 255, 218, 0.5)',
+                            },
+                            '&.Mui-focused fieldset': {
+                              borderColor: 'rgba(100, 255, 218, 0.7)',
+                            },
+                          },
+                          '& .MuiMenuItem-root:hover': {
+                            backgroundColor: 'rgba(2, 136, 209, 0.1)',
+                          },
+                          '& .MuiMenuItem-root.Mui-selected': {
+                            backgroundColor: 'rgba(2, 136, 209, 0.2)',
+                          },
+                        }}
+                      >
+                        {vietnamProvinces.map((province) => (
+                          <MenuItem key={province} value={province}>
+                            {province}
+                          </MenuItem>
+                        ))}
+                      </TextField>
+                    </Grid2>
+                    <Grid2 size={{ xs: 12 }}>
+                      <TextField
+                        fullWidth
+                        label="Address"
+                        name="address"
+                        value={deliveryInfo.address}
+                        onChange={handleInputChange}
+                        error={!!formErrors.address}
+                        helperText={formErrors.address}
+                        required
                         multiline
                         rows={2}
+                        InputProps={{
+                          startAdornment: (
+                            <LocationIcon
+                              sx={{
+                                mr: 1,
+                                mt: 1.5,
+                                alignSelf: 'flex-start',
+                                color: 'rgba(100, 255, 218, 0.5)',
+                              }}
+                            />
+                          ),
+                        }}
+                        sx={{
+                          '& .MuiOutlinedInput-root': {
+                            backgroundColor: 'rgba(1, 22, 39, 0.3)',
+                            '&:hover': {
+                              backgroundColor: 'rgba(1, 22, 39, 0.5)',
+                            },
+                            '& fieldset': {
+                              borderColor: 'rgba(100, 255, 218, 0.3)',
+                            },
+                            '&:hover fieldset': {
+                              borderColor: 'rgba(100, 255, 218, 0.5)',
+                            },
+                            '&.Mui-focused fieldset': {
+                              borderColor: 'rgba(100, 255, 218, 0.7)',
+                            },
+                          },
+                        }}
                       />
                     </Grid2>
-                  </>
-                )}
-              </Grid2>
-            </Paper>
-          </Grid2>
 
-          <Grid2 size={{ xs: 12, md: 5 }}>
-            <Paper sx={{ p: 3, mb: 3, bgcolor: '#f8f9ff' }}>
-              <Typography variant="h5" gutterBottom>
-                Order Summary
-              </Typography>
-              <Divider sx={{ mb: 2 }} />
-
-              {cartItems.map((item) => (
-                <Box
-                  key={item.product.id}
-                  sx={{ display: 'flex', mb: 2, py: 1 }}
-                >
-                  <Box sx={{ mr: 2, textAlign: 'center', minWidth: 40 }}>
-                    <Typography variant="body2" color="text.secondary">
-                      {item.quantity}x
-                    </Typography>
-                  </Box>
-                  <Box sx={{ flexGrow: 1 }}>
-                    <Typography variant="subtitle2">
-                      {item.product.title}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      {item.product.category}
-                    </Typography>
-                  </Box>
-                  <Box>
-                    <Typography variant="subtitle2">
-                      {formatCurrency(item.price * item.quantity)}
-                    </Typography>
-                  </Box>
-                </Box>
-              ))}
-
-              <Divider sx={{ my: 2 }} />
-
-              <Box
-                sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}
-              >
-                <Typography>Subtotal (excl. VAT):</Typography>
-                <Typography>{formatCurrency(calculateSubtotal())}</Typography>
-              </Box>
-
-              <Box
-                sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}
-              >
-                <Typography>VAT (10%):</Typography>
-                <Typography>{formatCurrency(calculateVAT())}</Typography>
-              </Box>
-
-              <Box
-                sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}
-              >
-                <Typography>Delivery Fee:</Typography>
-                <Typography>{formatCurrency(deliveryFee)}</Typography>
-              </Box>
-
-              {deliveryInfo.isRushDelivery && rushDeliveryFee > 0 && (
-                <Box
-                  sx={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    mb: 1,
-                  }}
-                >
-                  <Typography>Rush Delivery Fee:</Typography>
-                  <Typography>{formatCurrency(rushDeliveryFee)}</Typography>
-                </Box>
-              )}
-
-              <Divider sx={{ my: 2 }} />
-
-              <Box
-                sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}
-              >
-                <Typography variant="h6" color="primary.dark">
-                  Total:
-                </Typography>
-                <Typography variant="h6" color="primary.dark">
-                  {formatCurrency(
-                    calculateSubtotal() +
-                      calculateVAT() +
-                      deliveryFee +
-                      rushDeliveryFee
-                  )}
-                </Typography>
-              </Box>
-
-              <Button
-                variant="contained"
-                color="primary"
-                fullWidth
-                size="large"
-                onClick={handleNext}
-              >
-                Continue to Payment
-              </Button>
-              <Button
-                variant="outlined"
-                color="secondary"
-                fullWidth
-                size="large"
-                onClick={() => navigate('/cart')}
-                sx={{ mt: 1 }}
-              >
-                Back to Cart
-              </Button>
-            </Paper>
-          </Grid2>
-        </Grid2>
-      )}
-
-      {activeStep === 1 && (
-        <Grid2 container spacing={4}>
-          <Grid2 size={{ xs: 12, md: 7 }}>
-            <Paper sx={{ p: 3, mb: 3 }}>
-              <Typography variant="h5" gutterBottom>
-                Delivery Information
-              </Typography>
-              <Divider sx={{ mb: 3 }} />
-
-              <Grid2 container spacing={2}>
-                <Grid2 size={{ xs: 12, sm: 6 }}>
-                  <Typography variant="subtitle2" color="text.secondary">
-                    Recipient Name
-                  </Typography>
-                  <Typography variant="body1" gutterBottom>
-                    {deliveryInfo.recipientName}
-                  </Typography>
-                </Grid2>
-                <Grid2 size={{ xs: 12, sm: 6 }}>
-                  <Typography variant="subtitle2" color="text.secondary">
-                    Email
-                  </Typography>
-                  <Typography variant="body1" gutterBottom>
-                    {deliveryInfo.email}
-                  </Typography>
-                </Grid2>
-                <Grid2 size={{ xs: 12, sm: 6 }}>
-                  <Typography variant="subtitle2" color="text.secondary">
-                    Phone Number
-                  </Typography>
-                  <Typography variant="body1" gutterBottom>
-                    {deliveryInfo.phone}
-                  </Typography>
-                </Grid2>
-                <Grid2 size={{ xs: 12, sm: 6 }}>
-                  <Typography variant="subtitle2" color="text.secondary">
-                    Province/City
-                  </Typography>
-                  <Typography variant="body1" gutterBottom>
-                    {deliveryInfo.province}
-                  </Typography>
-                </Grid2>
-                <Grid2 size={{ xs: 12 }}>
-                  <Typography variant="subtitle2" color="text.secondary">
-                    Address
-                  </Typography>
-                  <Typography variant="body1" gutterBottom>
-                    {deliveryInfo.address}
-                  </Typography>
-                </Grid2>
-                {deliveryInfo.isRushDelivery && (
-                  <>
-                    <Grid2 size={{ xs: 12 }}>
-                      <Typography variant="subtitle2" color="text.secondary">
-                        Rush Delivery
-                      </Typography>
-                      <Typography variant="body1" gutterBottom>
-                        Yes -{' '}
-                        {new Date(
-                          deliveryInfo.rushDeliveryTime || ''
-                        ).toLocaleString()}
-                      </Typography>
-                    </Grid2>
-                    {deliveryInfo.rushDeliveryInstructions && (
+                    {isHanoi && (
                       <Grid2 size={{ xs: 12 }}>
-                        <Typography variant="subtitle2" color="text.secondary">
-                          Delivery Instructions
-                        </Typography>
-                        <Typography variant="body1" gutterBottom>
-                          {deliveryInfo.rushDeliveryInstructions}
-                        </Typography>
+                        <Box
+                          sx={{
+                            p: 2,
+                            borderRadius: 1,
+                            backgroundColor: 'rgba(2, 136, 209, 0.05)',
+                            border: '1px solid rgba(100, 255, 218, 0.1)',
+                            mb: 2,
+                          }}
+                        >
+                          <FormControlLabel
+                            control={
+                              <Checkbox
+                                checked={deliveryInfo.isRushDelivery}
+                                onChange={handleCheckboxChange}
+                                disabled={!canUseRushDelivery}
+                                color="primary"
+                                sx={{
+                                  color: 'rgba(100, 255, 218, 0.5)',
+                                  '&.Mui-checked': {
+                                    color: 'primary.light',
+                                  },
+                                }}
+                              />
+                            }
+                            label={
+                              <Typography color="text.primary">
+                                Rush Delivery (2-hour delivery timeframe)
+                              </Typography>
+                            }
+                          />
+                          {!canUseRushDelivery && (
+                            <Typography
+                              variant="caption"
+                              color="text.secondary"
+                              display="block"
+                              sx={{
+                                mt: 1,
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: 0.5,
+                              }}
+                            >
+                              <InfoIcon fontSize="small" color="warning" />
+                              Some items in your cart are not eligible for rush
+                              delivery (items over 3kg).
+                            </Typography>
+                          )}
+                          {deliveryInfo.isRushDelivery && (
+                            <Typography
+                              variant="caption"
+                              color="primary.light"
+                              display="block"
+                              sx={{
+                                mt: 1,
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: 0.5,
+                              }}
+                            >
+                              <InfoIcon fontSize="small" />
+                              Rush delivery is only available in Hanoi districts
+                              for eligible items. You must select a delivery
+                              time at least 2 hours from now, between 8 AM and 8
+                              PM. An additional fee of 10,000 VND per eligible
+                              item will be applied.
+                            </Typography>
+                          )}
+                        </Box>
                       </Grid2>
                     )}
-                  </>
-                )}
-              </Grid2>
 
-              <Box sx={{ mt: 3 }}>
-                <Typography variant="h5" gutterBottom>
-                  Payment Method
-                </Typography>
-                <Divider sx={{ mb: 3 }} />
-
-                <FormControl component="fieldset">
-                  <RadioGroup defaultValue="creditCard">
-                    <FormControlLabel
-                      value="creditCard"
-                      control={<Radio color="primary" />}
-                      label="Credit Card / Debit Card (VNPay)"
-                    />
-                  </RadioGroup>
-                </FormControl>
-
-                <Alert severity="info" sx={{ mt: 2 }}>
-                  You will be redirected to VNPay to complete your payment
-                  securely.
-                </Alert>
-              </Box>
-            </Paper>
-          </Grid2>
-
-          <Grid2 size={{ xs: 12, md: 5 }}>
-            <Paper sx={{ p: 3, mb: 3, bgcolor: '#f8f9ff' }}>
-              <Typography variant="h5" gutterBottom>
-                Order Summary
-              </Typography>
-              <Divider sx={{ mb: 2 }} />
-
-              {cartItems.map((item) => (
-                <Box
-                  key={item.product.id}
-                  sx={{ display: 'flex', mb: 2, py: 1 }}
-                >
-                  <Box sx={{ mr: 2, textAlign: 'center', minWidth: 40 }}>
-                    <Typography variant="body2" color="text.secondary">
-                      {item.quantity}x
-                    </Typography>
-                  </Box>
-                  <Box sx={{ flexGrow: 1 }}>
-                    <Typography variant="subtitle2">
-                      {item.product.title}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      {item.product.category}
-                    </Typography>
-                  </Box>
-                  <Box>
-                    <Typography variant="subtitle2">
-                      {formatCurrency(item.price * item.quantity)}
-                    </Typography>
-                  </Box>
+                    {deliveryInfo.isRushDelivery && (
+                      <>
+                        <Grid2 size={{ xs: 12, sm: 6 }}>
+                          <TextField
+                            fullWidth
+                            label="Preferred Delivery Time"
+                            name="rushDeliveryTime"
+                            type="datetime-local"
+                            value={deliveryInfo.rushDeliveryTime}
+                            onChange={handleInputChange}
+                            InputLabelProps={{ shrink: true }}
+                            error={!!formErrors.rushDeliveryTime}
+                            helperText={
+                              formErrors.rushDeliveryTime ||
+                              'Select a time at least 2 hours from now (8 AM - 8 PM)'
+                            }
+                            required
+                            InputProps={{
+                              startAdornment: (
+                                <TodayIcon
+                                  sx={{
+                                    mr: 1,
+                                    color: 'rgba(100, 255, 218, 0.5)',
+                                  }}
+                                />
+                              ),
+                            }}
+                            sx={{
+                              '& .MuiOutlinedInput-root': {
+                                backgroundColor: 'rgba(1, 22, 39, 0.3)',
+                                '&:hover': {
+                                  backgroundColor: 'rgba(1, 22, 39, 0.5)',
+                                },
+                                '& fieldset': {
+                                  borderColor: 'rgba(100, 255, 218, 0.3)',
+                                },
+                                '&:hover fieldset': {
+                                  borderColor: 'rgba(100, 255, 218, 0.5)',
+                                },
+                                '&.Mui-focused fieldset': {
+                                  borderColor: 'rgba(100, 255, 218, 0.7)',
+                                },
+                              },
+                            }}
+                          />
+                        </Grid2>
+                        <Grid2 size={{ xs: 12, sm: 6 }}>
+                          <TextField
+                            fullWidth
+                            label="Delivery Instructions"
+                            name="rushDeliveryInstructions"
+                            value={deliveryInfo.rushDeliveryInstructions || ''}
+                            onChange={handleInputChange}
+                            placeholder="Special instructions for delivery"
+                            multiline
+                            rows={2}
+                            InputProps={{
+                              startAdornment: (
+                                <NotesIcon
+                                  sx={{
+                                    mr: 1,
+                                    mt: 1.5,
+                                    alignSelf: 'flex-start',
+                                    color: 'rgba(100, 255, 218, 0.5)',
+                                  }}
+                                />
+                              ),
+                            }}
+                            sx={{
+                              '& .MuiOutlinedInput-root': {
+                                backgroundColor: 'rgba(1, 22, 39, 0.3)',
+                                '&:hover': {
+                                  backgroundColor: 'rgba(1, 22, 39, 0.5)',
+                                },
+                                '& fieldset': {
+                                  borderColor: 'rgba(100, 255, 218, 0.3)',
+                                },
+                                '&:hover fieldset': {
+                                  borderColor: 'rgba(100, 255, 218, 0.5)',
+                                },
+                                '&.Mui-focused fieldset': {
+                                  borderColor: 'rgba(100, 255, 218, 0.7)',
+                                },
+                              },
+                            }}
+                          />
+                        </Grid2>
+                      </>
+                    )}
+                  </Grid2>
                 </Box>
-              ))}
-
-              <Divider sx={{ my: 2 }} />
+              </Paper>
 
               <Box
-                sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'flex-end',
+                  gap: 2,
+                  mt: 3,
+                }}
               >
-                <Typography>Subtotal (excl. VAT):</Typography>
-                <Typography>{formatCurrency(calculateSubtotal())}</Typography>
-              </Box>
-
-              <Box
-                sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}
-              >
-                <Typography>VAT (10%):</Typography>
-                <Typography>{formatCurrency(calculateVAT())}</Typography>
-              </Box>
-
-              <Box
-                sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}
-              >
-                <Typography>Delivery Fee:</Typography>
-                <Typography>{formatCurrency(deliveryFee)}</Typography>
-              </Box>
-
-              {deliveryInfo.isRushDelivery && rushDeliveryFee > 0 && (
-                <Box
+                <Button
+                  variant="outlined"
+                  color="primary"
+                  startIcon={<ArrowBackIcon />}
+                  onClick={() => navigate('/cart')}
                   sx={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    mb: 1,
+                    px: 3,
+                    py: 1.2,
+                    borderColor: 'rgba(100, 255, 218, 0.3)',
+                    '&:hover': {
+                      borderColor: 'rgba(100, 255, 218, 0.5)',
+                      backgroundColor: 'rgba(100, 255, 218, 0.05)',
+                    },
                   }}
                 >
-                  <Typography>Rush Delivery Fee:</Typography>
-                  <Typography>{formatCurrency(rushDeliveryFee)}</Typography>
-                </Box>
-              )}
-
-              <Divider sx={{ my: 2 }} />
-
-              <Box
-                sx={{ display: 'flex', justifyContent: 'space-between', mb: 3 }}
-              >
-                <Typography variant="h6" color="primary.dark">
-                  Total:
-                </Typography>
-                <Typography variant="h6" color="primary.dark">
-                  {formatCurrency(
-                    calculateSubtotal() +
-                      calculateVAT() +
-                      deliveryFee +
-                      rushDeliveryFee
-                  )}
-                </Typography>
+                  Back to Cart
+                </Button>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  endIcon={<ArrowForwardIcon />}
+                  onClick={handleNext}
+                  sx={{
+                    px: 3,
+                    py: 1.2,
+                    position: 'relative',
+                    overflow: 'hidden',
+                    '&::after': {
+                      content: '""',
+                      position: 'absolute',
+                      top: 0,
+                      left: '-100%',
+                      width: '100%',
+                      height: '100%',
+                      background:
+                        'linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)',
+                      transition: 'all 0.6s',
+                    },
+                    '&:hover::after': {
+                      left: '100%',
+                    },
+                  }}
+                >
+                  Continue to Payment
+                </Button>
               </Box>
+            </Grid2>
 
-              <Button
-                variant="contained"
-                color="primary"
-                fullWidth
-                size="large"
-                onClick={handlePayment}
+            <Grid2 size={{ xs: 12, md: 5 }}>
+              <Paper
+                elevation={3}
+                sx={{
+                  p: 3,
+                  backgroundImage:
+                    'linear-gradient(135deg, #0d2538 0%, #041c2c 100%)',
+                  borderRadius: 2,
+                  border: '1px solid rgba(100, 255, 218, 0.1)',
+                  position: 'relative',
+                  overflow: 'hidden',
+                  '&::after': {
+                    content: '""',
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: '100%',
+                    backgroundImage:
+                      'radial-gradient(circle at 50% 50%, rgba(2, 136, 209, 0.08) 0%, transparent 70%)',
+                    opacity: 0.8,
+                    zIndex: 1,
+                  },
+                }}
               >
-                Complete Payment
-              </Button>
-              <Button
-                variant="outlined"
-                color="secondary"
-                fullWidth
-                size="large"
-                onClick={handleBack}
-                sx={{ mt: 1 }}
-              >
-                Back
-              </Button>
-            </Paper>
+                <Box sx={{ position: 'relative', zIndex: 2 }}>
+                  <Typography
+                    variant="h5"
+                    gutterBottom
+                    sx={{
+                      color: 'primary.light',
+                      fontWeight: 'bold',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 1,
+                    }}
+                  >
+                    <WavesIcon fontSize="small" />
+                    Order Summary
+                  </Typography>
+                  <Divider
+                    sx={{ mb: 2, borderColor: 'rgba(100, 255, 218, 0.1)' }}
+                  />
+
+                  {cartItems.map((item) => (
+                    <Box
+                      key={item.product.id}
+                      sx={{ display: 'flex', mb: 2, py: 1 }}
+                    >
+                      <Box sx={{ mr: 2, textAlign: 'center', minWidth: 40 }}>
+                        <Typography variant="body2" color="text.secondary">
+                          {item.quantity}x
+                        </Typography>
+                      </Box>
+                      <Box sx={{ flexGrow: 1 }}>
+                        <Typography variant="subtitle2" color="text.primary">
+                          {item.product.title}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          {item.product.category}
+                        </Typography>
+                      </Box>
+                      <Box>
+                        <Typography variant="subtitle2" color="primary.light">
+                          {formatCurrency(item.price * item.quantity)}
+                        </Typography>
+                      </Box>
+                    </Box>
+                  ))}
+
+                  <Divider
+                    sx={{ my: 2, borderColor: 'rgba(100, 255, 218, 0.1)' }}
+                  />
+
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      mb: 1,
+                    }}
+                  >
+                    <Typography color="text.secondary">
+                      Subtotal (excl. VAT):
+                    </Typography>
+                    <Typography color="text.primary">
+                      {formatCurrency(calculateSubtotal())}
+                    </Typography>
+                  </Box>
+
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      mb: 1,
+                    }}
+                  >
+                    <Typography color="text.secondary">VAT (10%):</Typography>
+                    <Typography color="text.primary">
+                      {formatCurrency(calculateVAT())}
+                    </Typography>
+                  </Box>
+
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      mb: 1,
+                    }}
+                  >
+                    <Typography color="text.secondary">
+                      Delivery Fee:
+                    </Typography>
+                    <Typography color="text.primary">
+                      {formatCurrency(deliveryFee)}
+                    </Typography>
+                  </Box>
+
+                  {deliveryInfo.isRushDelivery && rushDeliveryFee > 0 && (
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        mb: 1,
+                      }}
+                    >
+                      <Typography color="text.secondary">
+                        Rush Delivery Fee:
+                      </Typography>
+                      <Typography color="text.primary">
+                        {formatCurrency(rushDeliveryFee)}
+                      </Typography>
+                    </Box>
+                  )}
+
+                  <Divider
+                    sx={{ my: 2, borderColor: 'rgba(100, 255, 218, 0.1)' }}
+                  />
+
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      mb: 2,
+                    }}
+                  >
+                    <Typography
+                      variant="h6"
+                      color="primary.light"
+                      fontWeight="bold"
+                    >
+                      Total:
+                    </Typography>
+                    <Typography
+                      variant="h6"
+                      color="primary.light"
+                      fontWeight="bold"
+                    >
+                      {formatCurrency(
+                        calculateSubtotal() +
+                          calculateVAT() +
+                          deliveryFee +
+                          rushDeliveryFee
+                      )}
+                    </Typography>
+                  </Box>
+                </Box>
+              </Paper>
+            </Grid2>
           </Grid2>
-        </Grid2>
-      )}
-    </Container>
+        )}
+
+        {activeStep === 1 && (
+          <Grid2 container spacing={4}>
+            <Grid2 size={{ xs: 12, md: 7 }}>
+              <Paper
+                elevation={3}
+                sx={{
+                  p: 4,
+                  mb: 3,
+                  backgroundImage:
+                    'linear-gradient(135deg, #0d2538 0%, #041c2c 100%)',
+                  borderRadius: 2,
+                  border: '1px solid rgba(100, 255, 218, 0.1)',
+                  position: 'relative',
+                  overflow: 'hidden',
+                  '&::after': {
+                    content: '""',
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: '100%',
+                    backgroundImage:
+                      'radial-gradient(circle at 50% 0%, rgba(2, 136, 209, 0.08) 0%, transparent 70%)',
+                    opacity: 0.8,
+                    zIndex: 1,
+                  },
+                }}
+              >
+                <Box sx={{ position: 'relative', zIndex: 2 }}>
+                  <Typography
+                    variant="h5"
+                    gutterBottom
+                    sx={{
+                      color: 'primary.light',
+                      fontWeight: 'bold',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 1,
+                    }}
+                  >
+                    <LocalShippingIcon fontSize="small" />
+                    Delivery Information
+                  </Typography>
+                  <Divider
+                    sx={{ mb: 3, borderColor: 'rgba(100, 255, 218, 0.1)' }}
+                  />
+
+                  <Grid2 container spacing={2}>
+                    <Grid2 size={{ xs: 12, sm: 6 }}>
+                      <Typography variant="subtitle2" color="text.secondary">
+                        Recipient Name
+                      </Typography>
+                      <Typography
+                        variant="body1"
+                        gutterBottom
+                        color="text.primary"
+                      >
+                        {deliveryInfo.recipientName}
+                      </Typography>
+                    </Grid2>
+                    <Grid2 size={{ xs: 12, sm: 6 }}>
+                      <Typography variant="subtitle2" color="text.secondary">
+                        Email
+                      </Typography>
+                      <Typography
+                        variant="body1"
+                        gutterBottom
+                        color="text.primary"
+                      >
+                        {deliveryInfo.email}
+                      </Typography>
+                    </Grid2>
+                    <Grid2 size={{ xs: 12, sm: 6 }}>
+                      <Typography variant="subtitle2" color="text.secondary">
+                        Phone Number
+                      </Typography>
+                      <Typography
+                        variant="body1"
+                        gutterBottom
+                        color="text.primary"
+                      >
+                        {deliveryInfo.phone}
+                      </Typography>
+                    </Grid2>
+                    <Grid2 size={{ xs: 12, sm: 6 }}>
+                      <Typography variant="subtitle2" color="text.secondary">
+                        Province/City
+                      </Typography>
+                      <Typography
+                        variant="body1"
+                        gutterBottom
+                        color="text.primary"
+                      >
+                        {deliveryInfo.province}
+                      </Typography>
+                    </Grid2>
+                    <Grid2 size={{ xs: 12 }}>
+                      <Typography variant="subtitle2" color="text.secondary">
+                        Address
+                      </Typography>
+                      <Typography
+                        variant="body1"
+                        gutterBottom
+                        color="text.primary"
+                      >
+                        {deliveryInfo.address}
+                      </Typography>
+                    </Grid2>
+                    {deliveryInfo.isRushDelivery && (
+                      <>
+                        <Grid2 size={{ xs: 12 }}>
+                          <Typography
+                            variant="subtitle2"
+                            color="text.secondary"
+                          >
+                            Rush Delivery
+                          </Typography>
+                          <Typography
+                            variant="body1"
+                            gutterBottom
+                            sx={{
+                              color: 'primary.light',
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: 0.5,
+                            }}
+                          >
+                            <Box
+                              sx={{
+                                width: 8,
+                                height: 8,
+                                borderRadius: '50%',
+                                backgroundColor: 'primary.light',
+                                display: 'inline-block',
+                              }}
+                            />
+                            Yes -{' '}
+                            {new Date(
+                              deliveryInfo.rushDeliveryTime || ''
+                            ).toLocaleString()}
+                          </Typography>
+                        </Grid2>
+                        {deliveryInfo.rushDeliveryInstructions && (
+                          <Grid2 size={{ xs: 12 }}>
+                            <Typography
+                              variant="subtitle2"
+                              color="text.secondary"
+                            >
+                              Delivery Instructions
+                            </Typography>
+                            <Typography
+                              variant="body1"
+                              gutterBottom
+                              color="text.primary"
+                            >
+                              {deliveryInfo.rushDeliveryInstructions}
+                            </Typography>
+                          </Grid2>
+                        )}
+                      </>
+                    )}
+                  </Grid2>
+
+                  <Box sx={{ mt: 4 }}>
+                    <Typography
+                      variant="h5"
+                      gutterBottom
+                      sx={{
+                        color: 'primary.light',
+                        fontWeight: 'bold',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 1,
+                      }}
+                    >
+                      <PaymentIcon fontSize="small" />
+                      Payment Method
+                    </Typography>
+                    <Divider
+                      sx={{ mb: 3, borderColor: 'rgba(100, 255, 218, 0.1)' }}
+                    />
+
+                    <FormControl component="fieldset">
+                      <RadioGroup defaultValue="creditCard">
+                        <FormControlLabel
+                          value="creditCard"
+                          control={
+                            <Radio
+                              color="primary"
+                              sx={{
+                                color: 'rgba(100, 255, 218, 0.5)',
+                                '&.Mui-checked': {
+                                  color: 'primary.light',
+                                },
+                              }}
+                            />
+                          }
+                          label={
+                            <Box
+                              sx={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: 1,
+                              }}
+                            >
+                              <CreditCardIcon sx={{ color: 'primary.light' }} />
+                              <Typography color="text.primary">
+                                Credit Card / Debit Card (VNPay)
+                              </Typography>
+                            </Box>
+                          }
+                        />
+                      </RadioGroup>
+                    </FormControl>
+
+                    <Alert
+                      severity="info"
+                      sx={{
+                        mt: 2,
+                        backgroundColor: 'rgba(2, 136, 209, 0.1)',
+                        border: '1px solid rgba(100, 255, 218, 0.2)',
+                        '& .MuiAlert-icon': {
+                          color: 'primary.light',
+                        },
+                      }}
+                      icon={<InfoIcon />}
+                    >
+                      You will be redirected to VNPay to complete your payment
+                      securely.
+                    </Alert>
+                  </Box>
+                </Box>
+              </Paper>
+            </Grid2>
+
+            <Grid2 size={{ xs: 12, md: 5 }}>
+              <Paper
+                elevation={3}
+                sx={{
+                  p: 3,
+                  backgroundImage:
+                    'linear-gradient(135deg, #0d2538 0%, #041c2c 100%)',
+                  borderRadius: 2,
+                  border: '1px solid rgba(100, 255, 218, 0.1)',
+                  position: 'relative',
+                  overflow: 'hidden',
+                  '&::after': {
+                    content: '""',
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: '100%',
+                    backgroundImage:
+                      'radial-gradient(circle at 50% 50%, rgba(2, 136, 209, 0.08) 0%, transparent 70%)',
+                    opacity: 0.8,
+                    zIndex: 1,
+                  },
+                }}
+              >
+                <Box sx={{ position: 'relative', zIndex: 2 }}>
+                  <Typography
+                    variant="h5"
+                    gutterBottom
+                    sx={{
+                      color: 'primary.light',
+                      fontWeight: 'bold',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 1,
+                    }}
+                  >
+                    <WavesIcon fontSize="small" />
+                    Order Summary
+                  </Typography>
+                  <Divider
+                    sx={{ mb: 2, borderColor: 'rgba(100, 255, 218, 0.1)' }}
+                  />
+
+                  {cartItems.map((item) => (
+                    <Box
+                      key={item.product.id}
+                      sx={{ display: 'flex', mb: 2, py: 1 }}
+                    >
+                      <Box sx={{ mr: 2, textAlign: 'center', minWidth: 40 }}>
+                        <Typography variant="body2" color="text.secondary">
+                          {item.quantity}x
+                        </Typography>
+                      </Box>
+                      <Box sx={{ flexGrow: 1 }}>
+                        <Typography variant="subtitle2" color="text.primary">
+                          {item.product.title}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          {item.product.category}
+                        </Typography>
+                      </Box>
+                      <Box>
+                        <Typography variant="subtitle2" color="primary.light">
+                          {formatCurrency(item.price * item.quantity)}
+                        </Typography>
+                      </Box>
+                    </Box>
+                  ))}
+
+                  <Divider
+                    sx={{ my: 2, borderColor: 'rgba(100, 255, 218, 0.1)' }}
+                  />
+
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      mb: 1,
+                    }}
+                  >
+                    <Typography color="text.secondary">
+                      Subtotal (excl. VAT):
+                    </Typography>
+                    <Typography color="text.primary">
+                      {formatCurrency(calculateSubtotal())}
+                    </Typography>
+                  </Box>
+
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      mb: 1,
+                    }}
+                  >
+                    <Typography color="text.secondary">VAT (10%):</Typography>
+                    <Typography color="text.primary">
+                      {formatCurrency(calculateVAT())}
+                    </Typography>
+                  </Box>
+
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      mb: 1,
+                    }}
+                  >
+                    <Typography color="text.secondary">
+                      Delivery Fee:
+                    </Typography>
+                    <Typography color="text.primary">
+                      {formatCurrency(deliveryFee)}
+                    </Typography>
+                  </Box>
+
+                  {deliveryInfo.isRushDelivery && rushDeliveryFee > 0 && (
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        mb: 1,
+                      }}
+                    >
+                      <Typography color="text.secondary">
+                        Rush Delivery Fee:
+                      </Typography>
+                      <Typography color="text.primary">
+                        {formatCurrency(rushDeliveryFee)}
+                      </Typography>
+                    </Box>
+                  )}
+
+                  <Divider
+                    sx={{ my: 2, borderColor: 'rgba(100, 255, 218, 0.1)' }}
+                  />
+
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      mb: 3,
+                    }}
+                  >
+                    <Typography
+                      variant="h6"
+                      color="primary.light"
+                      fontWeight="bold"
+                    >
+                      Total:
+                    </Typography>
+                    <Typography
+                      variant="h6"
+                      color="primary.light"
+                      fontWeight="bold"
+                    >
+                      {formatCurrency(
+                        calculateSubtotal() +
+                          calculateVAT() +
+                          deliveryFee +
+                          rushDeliveryFee
+                      )}
+                    </Typography>
+                  </Box>
+
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    fullWidth
+                    size="large"
+                    onClick={handlePayment}
+                    startIcon={<PaymentIcon />}
+                    sx={{
+                      px: 3,
+                      py: 1.2,
+                      position: 'relative',
+                      overflow: 'hidden',
+                      '&::after': {
+                        content: '""',
+                        position: 'absolute',
+                        top: 0,
+                        left: '-100%',
+                        width: '100%',
+                        height: '100%',
+                        background:
+                          'linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)',
+                        transition: 'all 0.6s',
+                      },
+                      '&:hover::after': {
+                        left: '100%',
+                      },
+                    }}
+                  >
+                    Complete Payment
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    color="primary"
+                    fullWidth
+                    size="large"
+                    onClick={handleBack}
+                    startIcon={<ArrowBackIcon />}
+                    sx={{
+                      mt: 2,
+                      px: 3,
+                      py: 1.2,
+                      borderColor: 'rgba(100, 255, 218, 0.3)',
+                      '&:hover': {
+                        borderColor: 'rgba(100, 255, 218, 0.5)',
+                        backgroundColor: 'rgba(100, 255, 218, 0.05)',
+                      },
+                    }}
+                  >
+                    Back to Delivery Info
+                  </Button>
+                </Box>
+              </Paper>
+            </Grid2>
+          </Grid2>
+        )}
+      </Container>
+    </Box>
   );
 };
 

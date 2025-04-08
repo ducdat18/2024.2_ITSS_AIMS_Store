@@ -3,6 +3,7 @@ import { RouterProvider } from 'react-router-dom';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { router } from './routes';
+import deepOceanTheme from './theme';
 
 // Create a theme instance
 const theme = createTheme({
@@ -18,7 +19,7 @@ const theme = createTheme({
 
 function App() {
   return (
-    <ThemeProvider theme={theme}>
+    <ThemeProvider theme={deepOceanTheme}>
       <CssBaseline />
       <RouterProvider router={router} />
     </ThemeProvider>

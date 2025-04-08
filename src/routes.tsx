@@ -18,6 +18,8 @@ import OrderConfirmationPage from './pages/customer/OrderConfirmationPage';
 // Auth
 import LoginPage from './pages/auth/LoginPage';
 import RegisterPage from './pages/auth/RegisterPage';
+import ProductPage from './pages/customer/ProductPage';
+import About from './components/common/About';
 
 export const router = createBrowserRouter([
   {
@@ -29,6 +31,8 @@ export const router = createBrowserRouter([
       { path: 'cart', element: <CartPage /> },
       { path: 'checkout', element: <CheckoutPage /> },
       { path: 'order/confirmation/:id', element: <OrderConfirmationPage /> },
+      { path: 'products', element: <ProductPage /> },
+      { path: 'about', element: <About /> },
     ],
   },
   // {
