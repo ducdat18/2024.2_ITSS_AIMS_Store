@@ -20,6 +20,7 @@ import LoginPage from './pages/auth/LoginPage';
 import RegisterPage from './pages/auth/RegisterPage';
 import ProductPage from './pages/customer/ProductPage';
 import About from './components/common/About';
+import AdminLayout from './components/layout/AdminLayout';
 
 export const router = createBrowserRouter([
   {
@@ -33,6 +34,7 @@ export const router = createBrowserRouter([
       { path: 'order/confirmation/:id', element: <OrderConfirmationPage /> },
       { path: 'products', element: <ProductPage /> },
       { path: 'about', element: <About /> },
+      { path: 'admin', element: <AdminLayout /> },
     ],
   },
   // {
