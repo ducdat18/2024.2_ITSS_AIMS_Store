@@ -117,6 +117,20 @@ export interface User {
   isBlocked: boolean;
 }
 
+// User Account Type (added for admin management)
+export interface UserAccount {
+  id: string;
+  userId: string;
+  username: string;
+  email: string;
+  password: string; // This would be hashed in a real app
+  roles: UserRole[];
+  isBlocked: boolean;
+  lastLogin?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 // Cart Item
 export interface CartItem {
   product: Product;

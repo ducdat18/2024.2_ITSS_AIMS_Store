@@ -12,6 +12,7 @@ import {
   InputAdornment,
   IconButton,
   Grid2,
+  CircularProgress,
 } from '@mui/material';
 import {
   Visibility,
@@ -22,6 +23,8 @@ import {
   Waves as WavesIcon,
 } from '@mui/icons-material';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import { mockAccountService } from '../../mock/mockDataAccount';
+import { UserRole } from '../../types';
 
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
@@ -32,6 +35,7 @@ const LoginPage: React.FC = () => {
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [showPassword, setShowPassword] = useState(false);
   const [loginError, setLoginError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -47,6 +51,11 @@ const LoginPage: React.FC = () => {
         delete newErrors[name];
         return newErrors;
       });
+    }
+
+    // Clear login error when user changes input
+    if (loginError) {
+      setLoginError(null);
     }
   };
 
@@ -67,33 +76,77 @@ const LoginPage: React.FC = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoginError(null);
 
-    if (validateForm()) {
-      // In a real app, this would call an authentication API
-      console.log('Login attempt with:', formData.email);
+    if (!validateForm()) {
+      return;
+    }
 
-      // Simulate login failure for demo purposes
-      // In a real app, this would be handled by the API response
-      if (formData.email === 'invalid@example.com') {
+    try {
+      setLoading(true);
+
+      // Get all accounts
+      const accounts = await mockAccountService.getAccounts();
+
+      // Find account with matching email
+      const account = accounts.find((acc) => acc.email === formData.email);
+
+      // Check if account exists
+      if (!account) {
         setLoginError('Invalid email or password');
+        setLoading(false);
         return;
       }
 
-      // Simulate successful login
-      console.log('Login successful');
+      // Check password
+      if (account.password !== formData.password) {
+        setLoginError('Invalid email or password');
+        setLoading(false);
+        return;
+      }
 
-      // Check for admin/product manager role based on email
-      // This is just for demo - in a real app roles would come from the backend
-      if (formData.email.includes('admin')) {
-        navigate('/admin/dashboard');
-      } else if (formData.email.includes('manager')) {
+      // Check if account is blocked
+      if (account.isBlocked) {
+        setLoginError(
+          'Your account has been blocked. Please contact an administrator.'
+        );
+        setLoading(false);
+        return;
+      }
+
+      // Authentication successful
+      console.log('Login successful:', account.username);
+
+      // In a real app, you would set authentication tokens here
+      // For this mock, we'll just simulate it with localStorage
+      localStorage.setItem(
+        'currentUser',
+        JSON.stringify({
+          id: account.id,
+          username: account.username,
+          email: account.email,
+          roles: account.roles,
+        })
+      );
+
+      // Redirect based on role
+      if (account.roles.includes(UserRole.ADMIN)) {
+        // If user has admin role, redirect to admin dashboard
+        navigate('/admin');
+      } else if (account.roles.includes(UserRole.PRODUCT_MANAGER)) {
+        // If user has product manager role, redirect to product management
         navigate('/product/management');
       } else {
+        // Fallback to home page
         navigate('/');
       }
+    } catch (error) {
+      console.error('Login error:', error);
+      setLoginError('An error occurred during login. Please try again.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -259,6 +312,7 @@ const LoginPage: React.FC = () => {
                       ),
                     }}
                     required
+                    disabled={loading}
                     sx={{
                       '& .MuiOutlinedInput-root': {
                         backgroundColor: 'rgba(1, 22, 39, 0.3)',
@@ -302,6 +356,7 @@ const LoginPage: React.FC = () => {
                           <IconButton
                             onClick={() => setShowPassword(!showPassword)}
                             edge="end"
+                            disabled={loading}
                             sx={{
                               color: 'rgba(100, 255, 218, 0.7)',
                               '&:hover': {
@@ -315,6 +370,7 @@ const LoginPage: React.FC = () => {
                       ),
                     }}
                     required
+                    disabled={loading}
                     sx={{
                       '& .MuiOutlinedInput-root': {
                         backgroundColor: 'rgba(1, 22, 39, 0.3)',
@@ -342,6 +398,7 @@ const LoginPage: React.FC = () => {
                     variant="contained"
                     color="primary"
                     size="large"
+                    disabled={loading}
                     sx={{
                       py: 1.5,
                       mt: 1,
@@ -363,7 +420,11 @@ const LoginPage: React.FC = () => {
                       },
                     }}
                   >
-                    Sign In
+                    {loading ? (
+                      <CircularProgress size={24} color="inherit" />
+                    ) : (
+                      'Sign In'
+                    )}
                   </Button>
                 </Grid2>
               </Grid2>
@@ -398,6 +459,7 @@ const LoginPage: React.FC = () => {
                 to="/register"
                 variant="outlined"
                 color="primary"
+                disabled={loading}
                 sx={{
                   mt: 1,
                   px: 4,
@@ -410,6 +472,60 @@ const LoginPage: React.FC = () => {
               >
                 Register Now
               </Button>
+            </Box>
+
+            {/* Demo login credentials */}
+            <Box sx={{ mt: 3, textAlign: 'center' }}>
+              <Typography variant="caption" color="text.secondary">
+                Demo Accounts:
+              </Typography>
+              <Box
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  gap: 2,
+                  mt: 1,
+                }}
+              >
+                <Button
+                  size="small"
+                  variant="outlined"
+                  color="primary"
+                  disabled={loading}
+                  onClick={() => {
+                    setFormData({
+                      email: 'admin@aims.com',
+                      password: 'admin123',
+                    });
+                  }}
+                  sx={{
+                    fontSize: '0.7rem',
+                    py: 0.5,
+                    borderColor: 'rgba(100, 255, 218, 0.3)',
+                  }}
+                >
+                  Admin Login
+                </Button>
+                <Button
+                  size="small"
+                  variant="outlined"
+                  color="secondary"
+                  disabled={loading}
+                  onClick={() => {
+                    setFormData({
+                      email: 'pm@aims.com',
+                      password: 'pm123',
+                    });
+                  }}
+                  sx={{
+                    fontSize: '0.7rem',
+                    py: 0.5,
+                    borderColor: 'rgba(0, 96, 100, 0.3)',
+                  }}
+                >
+                  Product Manager Login
+                </Button>
+              </Box>
             </Box>
           </Box>
         </Paper>
