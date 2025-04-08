@@ -137,7 +137,7 @@ const LoginPage: React.FC = () => {
         navigate('/admin');
       } else if (account.roles.includes(UserRole.PRODUCT_MANAGER)) {
         // If user has product manager role, redirect to product management
-        navigate('/product/management');
+        navigate('/product-manager');
       } else {
         // Fallback to home page
         navigate('/');

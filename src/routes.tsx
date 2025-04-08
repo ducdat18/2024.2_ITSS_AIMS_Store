@@ -4,6 +4,7 @@ import { createBrowserRouter, Navigate } from 'react-router-dom';
 // Layouts
 import MainLayout from './components/layout/MainLayout';
 import AdminLayout from './components/layout/AdminLayout';
+import ProductManagerLayout from './components/layout/ProductManagerLayout';
 
 // Customer pages
 import HomePage from './pages/customer/HomePage';
@@ -20,9 +21,20 @@ import UserManagementPage from './pages/admin/UserManagementPage';
 import UserDetailPage from './pages/admin/UserDetailPage';
 import UserFormPage from './pages/admin/UserFormPage';
 
+// Product management pages
+import ProductManagerDashboard from './pages/product-management/ProductManagerDashboard';
+import ProductListPage from './pages/product-management/ProductListPage';
+import AddProductPage from './pages/product-management/AddProductPage';
+import EditProductPage from './pages/product-management/EditProductPage';
+import OrderManagementPage from './pages/product-management/OrderManagementPage';
+
 // Auth
 import LoginPage from './pages/auth/LoginPage';
 import RegisterPage from './pages/auth/RegisterPage';
+
+// Common components
+import ProtectedRoute from './components/common/ProtectedRoute';
+import { UserRole } from './types';
 
 export const router = createBrowserRouter([
   {
@@ -52,21 +64,18 @@ export const router = createBrowserRouter([
       { path: 'settings', element: <Navigate to="/admin/dashboard" replace /> },
     ],
   },
-  // {
-  //   path: '/product-management',
-  //   element: (
-  //     <ProtectedRoute allowedRoles={[UserRole.PRODUCT_MANAGER]}>
-  //       <ProductManagerLayout />
-  //     </ProtectedRoute>
-  //   ),
-  //   children: [
-  //     { index: true, element: <ProductDashboardPage /> },
-  //     { path: 'products', element: <ProductListPage /> },
-  //     { path: 'products/add', element: <AddProductPage /> },
-  //     { path: 'products/edit/:id', element: <EditProductPage /> },
-  //     { path: 'orders', element: <OrderManagementPage /> },
-  //   ],
-  // },
+  {
+    path: '/product-manager',
+    element: <ProductManagerLayout />,
+    children: [
+      { index: true, element: <ProductManagerDashboard /> },
+      { path: 'dashboard', element: <ProductManagerDashboard /> },
+      { path: 'products', element: <ProductListPage /> },
+      { path: 'products/add', element: <AddProductPage /> },
+      { path: 'products/edit/:id', element: <EditProductPage /> },
+      { path: 'orders', element: <OrderManagementPage /> },
+    ],
+  },
   {
     path: '/login',
     element: <LoginPage />,
