@@ -31,7 +31,13 @@ export enum DiscType {
   HDDVD = 'HDDVD'
 }
 
-// Base Product Type - contains attributes required for ALL products
+export interface Dimensions {
+  width: number;
+  height: number;
+  depth: number;
+}
+
+// Then update your BaseProduct interface to use this type
 export interface BaseProduct {
   id: string;
   title: string;
@@ -44,11 +50,7 @@ export interface BaseProduct {
   description: string; // new, used, primary color, condition for return
   quantity: number;
   warehouseEntryDate: string;
-  dimensions: {
-    width: number;
-    height: number;
-    depth: number;
-  };
+  dimensions: Dimensions;
   weight: number;
 }
 

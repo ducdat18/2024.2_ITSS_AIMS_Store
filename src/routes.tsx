@@ -22,19 +22,15 @@ import UserDetailPage from './pages/admin/UserDetailPage';
 import UserFormPage from './pages/admin/UserFormPage';
 
 // Product management pages
-import ProductManagerDashboard from './pages/product-management/ProductManagerDashboard';
-import ProductListPage from './pages/product-management/ProductListPage';
-import AddProductPage from './pages/product-management/AddProductPage';
-import EditProductPage from './pages/product-management/EditProductPage';
-import OrderManagementPage from './pages/product-management/OrderManagementPage';
 
 // Auth
 import LoginPage from './pages/auth/LoginPage';
 import RegisterPage from './pages/auth/RegisterPage';
-
-// Common components
-import ProtectedRoute from './components/common/ProtectedRoute';
-import { UserRole } from './types';
+import OrderDetailPage from './pages/product-management/OrderDetailPage';
+import OrderManagementPage from './pages/product-management/OrderManagementPage';
+import ProductFormPage from './pages/product-management/ProductFormPage';
+import ProductListPage from './pages/product-management/ProductListPage';
+import ProductManagerDashboard from './pages/product-management/ProductManagerDashboard';
 
 export const router = createBrowserRouter([
   {
@@ -65,15 +61,20 @@ export const router = createBrowserRouter([
     ],
   },
   {
-    path: '/product-manager',
+    path: '/product-management',
     element: <ProductManagerLayout />,
     children: [
       { index: true, element: <ProductManagerDashboard /> },
       { path: 'dashboard', element: <ProductManagerDashboard /> },
       { path: 'products', element: <ProductListPage /> },
-      { path: 'products/add', element: <AddProductPage /> },
-      { path: 'products/edit/:id', element: <EditProductPage /> },
+      { path: 'products/add', element: <ProductFormPage /> },
+      { path: 'products/edit/:id', element: <ProductFormPage /> },
       { path: 'orders', element: <OrderManagementPage /> },
+      { path: 'orders/:id', element: <OrderDetailPage /> },
+      {
+        path: 'analytics',
+        element: <Navigate to="/product-management/dashboard" replace />,
+      },
     ],
   },
   {
