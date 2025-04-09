@@ -1,4 +1,3 @@
-// src/pages/admin/UserDetailPage.tsx
 import React, { useState, useEffect } from 'react';
 import {
   Box,

@@ -1,4 +1,3 @@
-// src/components/home/CategoryGrid.tsx
 import React from 'react';
 import {
   Container,

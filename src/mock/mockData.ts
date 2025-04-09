@@ -650,7 +650,7 @@ export const mockProducts: Product[] = [
     category: ProductCategory.DVD,
     value: 350000,
     price: 400000,
-    discount: 30, // 30% discount
+    discount: -100, // 30% discount
     barcode: '097361386645',
     description: 'New, trilogy box set, remastered',
     quantity: 8,

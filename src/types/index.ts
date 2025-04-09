@@ -37,80 +37,65 @@ export interface Dimensions {
   depth: number;
 }
 
-// Then update your BaseProduct interface to use this type
 export interface BaseProduct {
   id: string;
   title: string;
   category: ProductCategory;
-  value: number; // Base value without VAT
-  price: number; // Current price without VAT (30%-150% of value)
+  value: number; 
+  price: number; 
   discount?: number; 
-  // Physical attributes (required for all products)
   barcode: string;
-  description: string; // new, used, primary color, condition for return
+  description: string; 
   quantity: number;
   warehouseEntryDate: string;
   dimensions: Dimensions;
   weight: number;
 }
 
-// Book-specific attributes
+
 export interface BookProduct extends BaseProduct {
   category: ProductCategory.BOOK;
   authors: string[];
   coverType: CoverType;
   publisher: string;
   publicationDate: string;
-  
-  // Optional attributes
   pages?: number;
   language?: string;
   genre?: string;
 }
 
-// CD-specific attributes
 export interface CDProduct extends BaseProduct {
   category: ProductCategory.CD;
   artists: string[];
   recordLabel: string;
   tracklist: string[];
   genre: string;
-  
-  // Optional attributes
   releaseDate?: string;
 }
 
-// LP Record-specific attributes (similar to CD)
 export interface LPProduct extends BaseProduct {
   category: ProductCategory.LP;
   artists: string[];
   recordLabel: string;
   tracklist: string[];
   genre: string;
-  
-  // Optional attributes
   releaseDate?: string;
 }
 
-// DVD-specific attributes
 export interface DVDProduct extends BaseProduct {
   category: ProductCategory.DVD;
   discType: DiscType;
   director: string;
-  runtime: number; // in minutes
+  runtime: number; 
   studio: string;
   language: string[];
   subtitles: string[];
-  
-  // Optional attributes
   releaseDate?: string;
   genre?: string;
 }
 
-// Union type for all product types
 export type Product = BookProduct | CDProduct | LPProduct | DVDProduct;
 
-// User Type
 export interface User {
   id: string;
   username: string;
@@ -119,13 +104,12 @@ export interface User {
   isBlocked: boolean;
 }
 
-// User Account Type (added for admin management)
 export interface UserAccount {
   id: string;
   userId: string;
   username: string;
   email: string;
-  password: string; // This would be hashed in a real app
+  password: string; 
   roles: UserRole[];
   isBlocked: boolean;
   lastLogin?: string;
@@ -133,19 +117,16 @@ export interface UserAccount {
   updatedAt: string;
 }
 
-// Cart Item
 export interface CartItem {
   product: Product;
   quantity: number;
 }
 
-// Cart
 export interface Cart {
   items: CartItem[];
   totalPriceExcludingVAT: number;
 }
 
-// Delivery Information
 export interface DeliveryInfo {
   recipientName: string;
   email: string;
@@ -157,30 +138,23 @@ export interface DeliveryInfo {
   rushDeliveryInstructions?: string;
 }
 
-// Order Item
 export interface OrderItem {
   product: Product;
   quantity: number;
-  price: number; // Price at time of order
+  price: number; 
 }
 
-// Order
 export interface Order {
   id: string;
   items: OrderItem[];
   deliveryInfo: DeliveryInfo;
   status: OrderStatus;
-  
-  // Financial details
-  subtotal: number; // Total without VAT
-  vat: number; // 10% of subtotal
+  subtotal: number; 
+  vat: number; 
   deliveryFee: number;
-  totalAmount: number; // subtotal + vat + deliveryFee
-  
-  // Transaction details
+  totalAmount: number; 
   transactionId?: string;
   transactionContent?: string;
   transactionDatetime?: string;
-  
   createdAt: string;
 }

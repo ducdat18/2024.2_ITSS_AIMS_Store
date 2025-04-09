@@ -1,4 +1,3 @@
-// src/pages/customer/OrderConfirmationPage.tsx
 import React from 'react';
 import {
   Box,

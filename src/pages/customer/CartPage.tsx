@@ -1,4 +1,3 @@
-// src/pages/customer/CartPage.tsx
 import React, { useState, useEffect } from 'react';
 import {
   Box,
@@ -52,7 +51,6 @@ const CartPage: React.FC = () => {
     // Simulate fetching cart from a service
     const fetchCart = async () => {
       try {
-        // Mock data - in a real app this would come from a cart service
         const products = await mockApiService.getProducts();
         const mockCart: CartItem[] = [
           { product: products[0], quantity: 2, price: products[0].price },
@@ -60,7 +58,6 @@ const CartPage: React.FC = () => {
         ];
         setCartItems(mockCart);
 
-        // Simulate checking inventory (as per AIMS requirements)
         const insufficientStock: { [key: string]: number } = {};
         mockCart.forEach((item) => {
           if (item.quantity > item.product.quantity) {

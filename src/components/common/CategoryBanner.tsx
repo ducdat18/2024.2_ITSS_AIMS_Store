@@ -1,4 +1,3 @@
-// src/components/common/CategoryBanner.tsx
 import React from 'react';
 import { Grid2, Box, Typography, Button, Paper } from '@mui/material';
 import { useNavigate } from 'react-router-dom';

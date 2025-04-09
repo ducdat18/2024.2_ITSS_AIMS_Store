@@ -1,4 +1,3 @@
-// src/components/products/ProductGrid.tsx
 import React from 'react';
 import { Grid2, Box, Typography, Pagination } from '@mui/material';
 import ProductItem from './ProductItem';

@@ -1,4 +1,3 @@
-// src/services/mockApiService.ts
 import { Product, User, Order, ProductCategory } from '../types';
 import { mockProducts, mockUsers, mockOrders } from './mockData';
 

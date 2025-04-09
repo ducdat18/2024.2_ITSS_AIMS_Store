@@ -1,4 +1,3 @@
-// src/pages/customer/AboutPage.tsx
 import React from 'react';
 import {
   Box,
@@ -65,25 +64,25 @@ const AboutPage: React.FC = () => {
   const categories = [
     {
       icon: <BookIcon sx={{ fontSize: 40, color: 'primary.light' }} />,
-      title: 'Books',
+      title: 'Book',
       details:
         'Paperback and hardcover books with detailed information about authors, publishers, and genres.',
     },
     {
       icon: <CDIcon sx={{ fontSize: 40, color: 'primary.light' }} />,
-      title: 'CDs',
+      title: 'CD',
       details:
         'Music collections and albums with artist information, record labels, tracklists, and genres.',
     },
     {
       icon: <LPIcon sx={{ fontSize: 40, color: 'primary.light' }} />,
-      title: 'LP Records',
+      title: 'LP Record',
       details:
         'Vinyl records with artist information, comprehensive details about record labels and tracklists.',
     },
     {
       icon: <DVDIcon sx={{ fontSize: 40, color: 'primary.light' }} />,
-      title: 'DVDs',
+      title: 'DVD',
       details:
         'Blu-ray and HD-DVD discs with information about directors, runtime, studios, languages, and subtitles.',
     },

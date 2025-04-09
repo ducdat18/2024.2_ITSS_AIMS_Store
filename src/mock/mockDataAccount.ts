@@ -1,4 +1,3 @@
-// src/mock/mockDataAccount.ts
 import { UserAccount, UserRole } from '../types';
 import { v4 as uuidv4 } from 'uuid';
 

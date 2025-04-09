@@ -1,4 +1,3 @@
-// src/pages/customer/HomePage.tsx
 import React, { useState, useEffect } from 'react';
 import { Box, Container, Typography, Divider } from '@mui/material';
 import { Product } from '../../types';

@@ -1,4 +1,3 @@
-// src/components/layout/Footer.tsx
 import React from 'react';
 import {
   Box,
@@ -113,7 +112,7 @@ const Footer: React.FC = () => {
               <Box component="li" sx={{ mb: 1 }}>
                 <Link
                   component={RouterLink}
-                  to="/products/category/BOOK"
+                  to="/products?category=BOOK"
                   color="inherit"
                   sx={{
                     textDecoration: 'none',
@@ -129,7 +128,7 @@ const Footer: React.FC = () => {
               <Box component="li" sx={{ mb: 1 }}>
                 <Link
                   component={RouterLink}
-                  to="/products/category/CD"
+                  to="/products?category=CD"
                   color="inherit"
                   sx={{
                     textDecoration: 'none',
@@ -145,7 +144,7 @@ const Footer: React.FC = () => {
               <Box component="li" sx={{ mb: 1 }}>
                 <Link
                   component={RouterLink}
-                  to="/products/category/LP"
+                  to="/products?category=LP"
                   color="inherit"
                   sx={{
                     textDecoration: 'none',
@@ -161,7 +160,7 @@ const Footer: React.FC = () => {
               <Box component="li">
                 <Link
                   component={RouterLink}
-                  to="/products/category/DVD"
+                  to="/products?category=DVD"
                   color="inherit"
                   sx={{
                     textDecoration: 'none',

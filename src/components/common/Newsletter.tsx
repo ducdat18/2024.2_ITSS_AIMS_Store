@@ -1,4 +1,3 @@
-// src/components/common/Newsletter.tsx
 import React, { useState } from 'react';
 import {
   Box,

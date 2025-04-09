@@ -1,4 +1,3 @@
-// src/components/products/ProductDetail.tsx
 import React, { useState } from 'react';
 import {
   Box,

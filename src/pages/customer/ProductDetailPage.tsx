@@ -1,4 +1,3 @@
-// src/pages/customer/ProductDetailPage.tsx
 import React, { useState, useEffect } from 'react';
 import {
   Box,
@@ -1020,7 +1019,7 @@ const ProductDetailPage: React.FC = () => {
                     </Typography>
                   </Box>
                   <Typography variant="body2" color="text.secondary">
-                    Price includes 10% VAT
+                    Price is not includes 10% VAT
                   </Typography>
                 </Box>
               ) : (
@@ -1033,7 +1032,7 @@ const ProductDetailPage: React.FC = () => {
                     {formatCurrency(product.price)}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
-                    Price includes 10% VAT
+                    Price is not includes 10% VAT
                   </Typography>
                 </Box>
               )}

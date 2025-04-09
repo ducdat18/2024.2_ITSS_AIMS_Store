@@ -1,4 +1,3 @@
-// src/pages/auth/RegisterPage.tsx
 import React, { useState } from 'react';
 import {
   Box,
@@ -39,7 +38,6 @@ const vietnamProvinces = [
   'Da Nang',
   'Hai Phong',
   'Can Tho',
-  // More provinces would be included here
 ];
 
 const RegisterPage: React.FC = () => {

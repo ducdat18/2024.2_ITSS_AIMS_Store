@@ -1,4 +1,3 @@
-// src/components/home/Banner.tsx
 import React from 'react';
 import { Box, Container, Grid2, Typography, Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom';

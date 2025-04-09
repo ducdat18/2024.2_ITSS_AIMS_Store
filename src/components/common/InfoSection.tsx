@@ -1,4 +1,3 @@
-// src/components/layout/InfoSection.tsx
 import React from 'react';
 import {
   Box,
