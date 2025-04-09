@@ -10,8 +10,8 @@ export enum ProductCategory {
 
 export enum UserRole {
   ADMIN = 'ADMIN',
-  PRODUCT_MANAGER = 'PRODUCT_MANAGER'
-  // Note: Customer is not a role in the system as they don't need to log in
+  PRODUCT_MANAGER = 'PRODUCT_MANAGER',
+  CUSTOMER = 'CUSTOMER' // Added CUSTOMER role
 }
 
 export enum OrderStatus {
@@ -157,4 +157,20 @@ export interface Order {
   transactionContent?: string;
   transactionDatetime?: string;
   createdAt: string;
+}
+
+// Customer specific interfaces
+export interface Address {
+  id: string;
+  userId: string;
+  name: string;
+  phone: string;
+  province: string;
+  address: string;
+  isDefault: boolean;
+}
+
+export interface WishlistItem {
+  product: Product;
+  addedAt: string;
 }

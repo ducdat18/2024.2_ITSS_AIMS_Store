@@ -110,6 +110,43 @@ export const mockUserAccounts: UserAccount[] = [
     lastLogin: '2025-04-01T15:10:40',
     createdAt: '2024-03-10T09:30:00',
     updatedAt: '2024-03-10T09:30:00',
+  },
+  // Added customer accounts
+  {
+    id: 'acc-010',
+    userId: 'user-010',
+    username: 'john_customer',
+    email: 'john_customer@example.com',
+    password: 'customer123',
+    roles: [UserRole.CUSTOMER],
+    isBlocked: false,
+    lastLogin: '2025-04-06T10:15:30',
+    createdAt: '2024-03-15T14:30:00',
+    updatedAt: '2024-03-15T14:30:00',
+  },
+  {
+    id: 'acc-011',
+    userId: 'user-011',
+    username: 'mary_customer',
+    email: 'mary_customer@example.com',
+    password: 'customer123',
+    roles: [UserRole.CUSTOMER],
+    isBlocked: false,
+    lastLogin: '2025-04-05T16:45:20',
+    createdAt: '2024-03-20T09:15:00',
+    updatedAt: '2024-03-20T09:15:00',
+  },
+  {
+    id: 'acc-012',
+    userId: 'user-012',
+    username: 'david_customer',
+    email: 'david_customer@example.com',
+    password: 'customer123',
+    roles: [UserRole.CUSTOMER],
+    isBlocked: false,
+    lastLogin: '2025-04-07T11:30:15',
+    createdAt: '2024-03-25T10:45:00',
+    updatedAt: '2024-03-25T10:45:00',
   }
 ];
 
@@ -194,5 +231,22 @@ export const mockAccountService = {
     if (account.password !== currentPassword) return false;
     
     return true;
+  },
+
+  // Added for customer functionality
+  registerCustomer: async (userData: { username: string, email: string, password: string }): Promise<UserAccount> => {
+    await new Promise(resolve => setTimeout(resolve, 700));
+    const newAccount: UserAccount = {
+      id: `acc-${uuidv4().substring(0, 8)}`,
+      userId: `user-${uuidv4().substring(0, 8)}`,
+      username: userData.username,
+      email: userData.email,
+      password: userData.password,
+      roles: [UserRole.CUSTOMER],
+      isBlocked: false,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+    return newAccount;
   }
 };

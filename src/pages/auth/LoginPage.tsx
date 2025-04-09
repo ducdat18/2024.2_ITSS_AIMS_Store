@@ -137,6 +137,9 @@ const LoginPage: React.FC = () => {
       } else if (account.roles.includes(UserRole.PRODUCT_MANAGER)) {
         // If user has product manager role, redirect to product management
         navigate('/product-management');
+      } else if (account.roles.includes(UserRole.CUSTOMER)) {
+        // If user has customer role, redirect to home page
+        navigate('/');
       } else {
         // Fallback to home page
         navigate('/');
@@ -481,8 +484,9 @@ const LoginPage: React.FC = () => {
               <Box
                 sx={{
                   display: 'flex',
+                  flexWrap: 'wrap',
                   justifyContent: 'center',
-                  gap: 2,
+                  gap: 1,
                   mt: 1,
                 }}
               >
@@ -503,7 +507,7 @@ const LoginPage: React.FC = () => {
                     borderColor: 'rgba(100, 255, 218, 0.3)',
                   }}
                 >
-                  Admin Login
+                  Admin
                 </Button>
                 <Button
                   size="small"
@@ -522,7 +526,26 @@ const LoginPage: React.FC = () => {
                     borderColor: 'rgba(0, 96, 100, 0.3)',
                   }}
                 >
-                  Product Manager Login
+                  Product Manager
+                </Button>
+                <Button
+                  size="small"
+                  variant="outlined"
+                  color="info"
+                  disabled={loading}
+                  onClick={() => {
+                    setFormData({
+                      email: 'john_customer@example.com',
+                      password: 'customer123',
+                    });
+                  }}
+                  sx={{
+                    fontSize: '0.7rem',
+                    py: 0.5,
+                    borderColor: 'rgba(100, 255, 218, 0.3)',
+                  }}
+                >
+                  Customer (John)
                 </Button>
               </Box>
             </Box>

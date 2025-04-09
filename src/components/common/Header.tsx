@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   AppBar,
   Toolbar,
@@ -16,6 +16,10 @@ import {
   ListItemIcon,
   Divider,
   useMediaQuery,
+  Menu,
+  MenuItem,
+  Avatar,
+  Tooltip,
 } from '@mui/material';
 import { alpha, useTheme } from '@mui/material/styles';
 import {
@@ -29,8 +33,15 @@ import {
   MovieCreation as DVDIcon,
   Waves as WavesIcon,
   Inventory as InventoryIcon,
+  Logout as LogoutIcon,
+  Settings as SettingsIcon,
+  FavoriteBorder as FavoriteIcon,
+  HistoryOutlined as HistoryIcon,
+  AccountCircle as AccountCircleIcon,
+  Dashboard as DashboardIcon,
 } from '@mui/icons-material';
 import { Link, useNavigate } from 'react-router-dom';
+import { UserRole } from '../../types';
 
 const Header: React.FC = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -38,6 +49,22 @@ const Header: React.FC = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const navigate = useNavigate();
+  const [currentUser, setCurrentUser] = useState<any>(null);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+
+  // Load user from localStorage on component mount
+  useEffect(() => {
+    const userStr = localStorage.getItem('currentUser');
+    if (userStr) {
+      try {
+        const userData = JSON.parse(userStr);
+        setCurrentUser(userData);
+      } catch (error) {
+        console.error('Error parsing user data:', error);
+      }
+    }
+  }, []);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
@@ -48,6 +75,27 @@ const Header: React.FC = () => {
     navigate(`/products?search=${searchQuery}`);
   };
 
+  const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleLogout = () => {
+    // Clear user data from localStorage
+    localStorage.removeItem('currentUser');
+    setCurrentUser(null);
+    handleMenuClose();
+    navigate('/');
+  };
+
+  const handleNavigate = (path: string) => {
+    navigate(path);
+    handleMenuClose();
+  };
+
   // Category definitions - now only used in mobile drawer
   const categories = [
     { label: 'Books', value: 'BOOK', icon: <BookIcon /> },
@@ -55,6 +103,21 @@ const Header: React.FC = () => {
     { label: 'LP Records', value: 'LP', icon: <LPIcon /> },
     { label: 'DVDs', value: 'DVD', icon: <DVDIcon /> },
   ];
+
+  // Check if user has a specific role
+  const hasRole = (role: UserRole): boolean => {
+    return currentUser?.roles?.includes(role) || false;
+  };
+
+  // Get proper dashboard link based on user role
+  const getDashboardLink = (): string => {
+    if (hasRole(UserRole.ADMIN)) {
+      return '/admin';
+    } else if (hasRole(UserRole.PRODUCT_MANAGER)) {
+      return '/product-management';
+    }
+    return '/account';
+  };
 
   return (
     <AppBar position="sticky" elevation={4}>
@@ -171,7 +234,7 @@ const Header: React.FC = () => {
             </Box>
           </Box>
 
-          <Box sx={{ display: 'flex' }}>
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <IconButton
               color="inherit"
               component={Link}
@@ -183,15 +246,165 @@ const Header: React.FC = () => {
               </Badge>
             </IconButton>
 
-            <Button
-              variant="outlined"
-              color="primary"
-              startIcon={<PersonIcon />}
-              onClick={() => navigate('/login')}
-              sx={{ ml: { xs: 0, sm: 1 }, display: { xs: 'none', sm: 'flex' } }}
-            >
-              Login
-            </Button>
+            {currentUser ? (
+              <>
+                <Tooltip title="Account menu">
+                  <IconButton
+                    onClick={handleProfileMenuOpen}
+                    size="small"
+                    sx={{ ml: 1 }}
+                    aria-controls={open ? 'account-menu' : undefined}
+                    aria-haspopup="true"
+                    aria-expanded={open ? 'true' : undefined}
+                  >
+                    <Avatar
+                      sx={{
+                        width: 32,
+                        height: 32,
+                        backgroundColor: hasRole(UserRole.ADMIN)
+                          ? 'primary.main'
+                          : hasRole(UserRole.PRODUCT_MANAGER)
+                          ? 'secondary.main'
+                          : 'info.main',
+                      }}
+                    >
+                      {currentUser.username.charAt(0).toUpperCase()}
+                    </Avatar>
+                  </IconButton>
+                </Tooltip>
+                <Menu
+                  anchorEl={anchorEl}
+                  id="account-menu"
+                  open={open}
+                  onClose={handleMenuClose}
+                  onClick={handleMenuClose}
+                  transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+                  anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+                  sx={{
+                    '& .MuiPaper-root': {
+                      borderRadius: 2,
+                      minWidth: 180,
+                      backgroundColor: 'rgba(13, 37, 56, 0.95)',
+                      boxShadow: '0 8px 16px rgba(0, 0, 0, 0.5)',
+                      border: '1px solid rgba(100, 255, 218, 0.1)',
+                    },
+                  }}
+                >
+                  <Box
+                    sx={{ px: 2, py: 1, display: 'flex', alignItems: 'center' }}
+                  >
+                    <Avatar
+                      sx={{
+                        width: 32,
+                        height: 32,
+                        mr: 1,
+                        backgroundColor: hasRole(UserRole.ADMIN)
+                          ? 'primary.main'
+                          : hasRole(UserRole.PRODUCT_MANAGER)
+                          ? 'secondary.main'
+                          : 'info.main',
+                      }}
+                    >
+                      {currentUser.username.charAt(0).toUpperCase()}
+                    </Avatar>
+                    <Box>
+                      <Typography variant="subtitle2" color="text.primary">
+                        {currentUser.username}
+                      </Typography>
+                      <Typography variant="caption" color="text.secondary">
+                        {currentUser.email}
+                      </Typography>
+                    </Box>
+                  </Box>
+
+                  <Divider sx={{ borderColor: 'rgba(100, 255, 218, 0.1)' }} />
+
+                  {/* Show dashboard option for Admin and Product Manager */}
+                  {(hasRole(UserRole.ADMIN) ||
+                    hasRole(UserRole.PRODUCT_MANAGER)) && (
+                    <MenuItem
+                      onClick={() => handleNavigate(getDashboardLink())}
+                    >
+                      <ListItemIcon>
+                        <DashboardIcon
+                          fontSize="small"
+                          sx={{ color: 'primary.light' }}
+                        />
+                      </ListItemIcon>
+                      <ListItemText>Dashboard</ListItemText>
+                    </MenuItem>
+                  )}
+
+                  {/* Show customer-specific options */}
+                  {hasRole(UserRole.CUSTOMER) && (
+                    <>
+                      <MenuItem onClick={() => handleNavigate('/account')}>
+                        <ListItemIcon>
+                          <AccountCircleIcon
+                            fontSize="small"
+                            sx={{ color: 'primary.light' }}
+                          />
+                        </ListItemIcon>
+                        <ListItemText>My Account</ListItemText>
+                      </MenuItem>
+                      <MenuItem onClick={() => handleNavigate('/orders')}>
+                        <ListItemIcon>
+                          <HistoryIcon
+                            fontSize="small"
+                            sx={{ color: 'primary.light' }}
+                          />
+                        </ListItemIcon>
+                        <ListItemText>Order History</ListItemText>
+                      </MenuItem>
+                      <MenuItem onClick={() => handleNavigate('/wishlist')}>
+                        <ListItemIcon>
+                          <FavoriteIcon
+                            fontSize="small"
+                            sx={{ color: 'primary.light' }}
+                          />
+                        </ListItemIcon>
+                        <ListItemText>Wishlist</ListItemText>
+                      </MenuItem>
+                    </>
+                  )}
+
+                  <MenuItem onClick={() => handleNavigate('/account/settings')}>
+                    <ListItemIcon>
+                      <SettingsIcon
+                        fontSize="small"
+                        sx={{ color: 'primary.light' }}
+                      />
+                    </ListItemIcon>
+                    <ListItemText>Settings</ListItemText>
+                  </MenuItem>
+
+                  <Divider sx={{ borderColor: 'rgba(100, 255, 218, 0.1)' }} />
+
+                  <MenuItem onClick={handleLogout}>
+                    <ListItemIcon>
+                      <LogoutIcon
+                        fontSize="small"
+                        sx={{ color: 'error.main' }}
+                      />
+                    </ListItemIcon>
+                    <ListItemText>Logout</ListItemText>
+                  </MenuItem>
+                </Menu>
+              </>
+            ) : (
+              <Button
+                variant="outlined"
+                color="primary"
+                startIcon={<PersonIcon />}
+                onClick={() => navigate('/login')}
+                sx={{
+                  ml: { xs: 0, sm: 1 },
+                  display: { xs: 'none', sm: 'flex' },
+                }}
+              >
+                Login
+              </Button>
+            )}
           </Box>
         </Toolbar>
       </Container>
@@ -224,6 +437,37 @@ const Header: React.FC = () => {
             <WavesIcon sx={{ mr: 1, color: 'primary.light' }} />
             AIMS Media Store
           </Typography>
+
+          {currentUser && (
+            <Box
+              sx={{
+                px: 2,
+                py: 1,
+                display: 'flex',
+                alignItems: 'center',
+                mb: 1,
+              }}
+            >
+              <Avatar
+                sx={{
+                  width: 32,
+                  height: 32,
+                  mr: 1,
+                  backgroundColor: hasRole(UserRole.ADMIN)
+                    ? 'primary.main'
+                    : hasRole(UserRole.PRODUCT_MANAGER)
+                    ? 'secondary.main'
+                    : 'info.main',
+                }}
+              >
+                {currentUser.username.charAt(0).toUpperCase()}
+              </Avatar>
+              <Typography variant="subtitle2" color="text.primary">
+                {currentUser.username}
+              </Typography>
+            </Box>
+          )}
+
           <Divider />
           <List>
             <ListItemButton
@@ -296,17 +540,87 @@ const Header: React.FC = () => {
               <ListItemText primary="Shopping Cart" />
             </ListItemButton>
 
-            <ListItemButton
-              onClick={() => {
-                navigate('/login');
-                setDrawerOpen(false);
-              }}
-            >
-              <ListItemIcon sx={{ color: 'primary.light' }}>
-                <PersonIcon />
-              </ListItemIcon>
-              <ListItemText primary="Login" />
-            </ListItemButton>
+            {currentUser ? (
+              <>
+                {(hasRole(UserRole.ADMIN) ||
+                  hasRole(UserRole.PRODUCT_MANAGER)) && (
+                  <ListItemButton
+                    onClick={() => {
+                      navigate(getDashboardLink());
+                      setDrawerOpen(false);
+                    }}
+                  >
+                    <ListItemIcon sx={{ color: 'primary.light' }}>
+                      <DashboardIcon />
+                    </ListItemIcon>
+                    <ListItemText primary="Dashboard" />
+                  </ListItemButton>
+                )}
+
+                {/* Customer-specific options */}
+                {hasRole(UserRole.CUSTOMER) && (
+                  <>
+                    <ListItemButton
+                      onClick={() => {
+                        navigate('/account');
+                        setDrawerOpen(false);
+                      }}
+                    >
+                      <ListItemIcon sx={{ color: 'primary.light' }}>
+                        <AccountCircleIcon />
+                      </ListItemIcon>
+                      <ListItemText primary="My Account" />
+                    </ListItemButton>
+                    <ListItemButton
+                      onClick={() => {
+                        navigate('/orders');
+                        setDrawerOpen(false);
+                      }}
+                    >
+                      <ListItemIcon sx={{ color: 'primary.light' }}>
+                        <HistoryIcon />
+                      </ListItemIcon>
+                      <ListItemText primary="Order History" />
+                    </ListItemButton>
+                    <ListItemButton
+                      onClick={() => {
+                        navigate('/wishlist');
+                        setDrawerOpen(false);
+                      }}
+                    >
+                      <ListItemIcon sx={{ color: 'primary.light' }}>
+                        <FavoriteIcon />
+                      </ListItemIcon>
+                      <ListItemText primary="Wishlist" />
+                    </ListItemButton>
+                  </>
+                )}
+
+                <ListItemButton
+                  onClick={() => {
+                    handleLogout();
+                    setDrawerOpen(false);
+                  }}
+                >
+                  <ListItemIcon sx={{ color: 'error.main' }}>
+                    <LogoutIcon />
+                  </ListItemIcon>
+                  <ListItemText primary="Logout" />
+                </ListItemButton>
+              </>
+            ) : (
+              <ListItemButton
+                onClick={() => {
+                  navigate('/login');
+                  setDrawerOpen(false);
+                }}
+              >
+                <ListItemIcon sx={{ color: 'primary.light' }}>
+                  <PersonIcon />
+                </ListItemIcon>
+                <ListItemText primary="Login" />
+              </ListItemButton>
+            )}
           </List>
         </Box>
       </Drawer>
