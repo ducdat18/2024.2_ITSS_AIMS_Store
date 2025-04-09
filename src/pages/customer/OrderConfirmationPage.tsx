@@ -29,6 +29,11 @@ const OrderConfirmationPage: React.FC = () => {
   // Use orderId from URL or default
   const orderId = id || 'order-123456789';
 
+  // Handle cancel order with debug logging
+  const handleCancelOrder = () => {
+    navigate(`/order/cancel/${orderId}`);
+  };
+
   return (
     <Box
       sx={{
@@ -469,9 +474,7 @@ const OrderConfirmationPage: React.FC = () => {
           <Button
             variant="outlined"
             color="error"
-            onClick={() => {
-              alert('Order cancellation would be implemented here');
-            }}
+            onClick={handleCancelOrder}
             startIcon={<CancelIcon />}
             sx={{
               px: 3,

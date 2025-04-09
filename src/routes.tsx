@@ -36,12 +36,12 @@ import RegisterPage from './pages/auth/RegisterPage';
 import { UserRole } from './types';
 import AuthGuard from './components/customer/AuthGuard';
 import AccountPage from './pages/account/AccountPage';
-import OrderDetailPage from './pages/product-management/OrderDetailPage';
 import AccountOrdersPage from './pages/account/AccountOrdersPage';
 import AccountWishlistPage from './pages/account/AccountWislistPage';
 import AccountAddressPage from './pages/account/AccountAdressPage';
 import AccountSecurityPage from './pages/account/AccountSecurityPage';
 import AccountOrderDetailPage from './pages/account/AccountOrderDetailPage';
+import CancelOrderPage from './pages/customer/CancelOrderPage';
 
 export const router = createBrowserRouter([
   // Main layout (for all users)
@@ -60,6 +60,7 @@ export const router = createBrowserRouter([
       { path: 'cart', element: <CartPage /> },
       { path: 'checkout', element: <CheckoutPage /> },
       { path: 'order/confirmation/:id', element: <OrderConfirmationPage /> },
+      { path: 'order/cancel/:id', element: <CancelOrderPage /> },
 
       // Customer account pages (protected - require customer login)
       {
