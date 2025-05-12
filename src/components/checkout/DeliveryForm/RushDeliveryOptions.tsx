@@ -1,16 +1,16 @@
 import React from 'react';
-import { 
-  Box, 
-  Grid2, 
-  FormControlLabel, 
-  Checkbox, 
-  Typography, 
-  TextField 
+import {
+  Box,
+  Grid2,
+  FormControlLabel,
+  Checkbox,
+  Typography,
+  TextField,
 } from '@mui/material';
-import { 
-  Info as InfoIcon, 
-  Today as TodayIcon, 
-  Notes as NotesIcon 
+import {
+  Info as InfoIcon,
+  Today as TodayIcon,
+  Notes as NotesIcon,
 } from '@mui/icons-material';
 
 export interface RushDeliveryData {
@@ -35,14 +35,15 @@ const RushDeliveryOptions: React.FC<RushDeliveryOptionsProps> = ({
   canUseRushDelivery,
 }) => {
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // Make sure the onChange handler accepts boolean values
     onChange('isRushDelivery', e.target.checked);
   };
 
-  const handleInputChange = (field: keyof RushDeliveryData) => (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    onChange(field, e.target.value);
-  };
+  const handleInputChange =
+    (field: keyof RushDeliveryData) =>
+    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      onChange(field, e.target.value);
+    };
 
   const inputStyles = {
     '& .MuiOutlinedInput-root': {
@@ -96,7 +97,7 @@ const RushDeliveryOptions: React.FC<RushDeliveryOptionsProps> = ({
             </Typography>
           }
         />
-        
+
         {!canUseRushDelivery && (
           <Typography
             variant="caption"
@@ -110,10 +111,11 @@ const RushDeliveryOptions: React.FC<RushDeliveryOptionsProps> = ({
             }}
           >
             <InfoIcon fontSize="small" color="warning" />
-            Some items in your cart are not eligible for rush delivery (items over 3kg).
+            Some items in your cart are not eligible for rush delivery (items
+            over 3kg).
           </Typography>
         )}
-        
+
         {data.isRushDelivery && (
           <Typography
             variant="caption"
@@ -127,9 +129,10 @@ const RushDeliveryOptions: React.FC<RushDeliveryOptionsProps> = ({
             }}
           >
             <InfoIcon fontSize="small" />
-            Rush delivery is only available in Hanoi districts for eligible items. 
-            You must select a delivery time at least 2 hours from now, between 8 AM and 8 PM. 
-            An additional fee of 10,000 VND per eligible item will be applied.
+            Rush delivery is only available in Hanoi districts for eligible
+            items. You must select a delivery time at least 2 hours from now,
+            between 8 AM and 8 PM. An additional fee of 10,000 VND per eligible
+            item will be applied.
           </Typography>
         )}
 

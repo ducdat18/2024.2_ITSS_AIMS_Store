@@ -6,7 +6,6 @@ import {
   Box,
   IconButton,
   InputBase,
-  Badge,
   Container,
   Button,
   Drawer,
@@ -24,7 +23,6 @@ import {
 import { alpha, useTheme } from '@mui/material/styles';
 import {
   Search as SearchIcon,
-  ShoppingCart as CartIcon,
   Menu as MenuIcon,
   Person as PersonIcon,
   Book as BookIcon,
@@ -35,9 +33,6 @@ import {
   Inventory as InventoryIcon,
   Logout as LogoutIcon,
   Settings as SettingsIcon,
-  FavoriteBorder as FavoriteIcon,
-  HistoryOutlined as HistoryIcon,
-  AccountCircle as AccountCircleIcon,
   Dashboard as DashboardIcon,
 } from '@mui/icons-material';
 import { Link, useNavigate } from 'react-router-dom';
@@ -116,7 +111,17 @@ const Header: React.FC = () => {
     } else if (hasRole(UserRole.PRODUCT_MANAGER)) {
       return '/product-management';
     }
-    return '/account';
+    return '/';
+  };
+
+  // Get settings link based on user role
+  const getSettingsLink = (): string => {
+    if (hasRole(UserRole.ADMIN)) {
+      return '/admin/settings';
+    } else if (hasRole(UserRole.PRODUCT_MANAGER)) {
+      return '/product-management/dashboard';
+    }
+    return '/';
   };
 
   return (
@@ -235,17 +240,6 @@ const Header: React.FC = () => {
           </Box>
 
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <IconButton
-              color="inherit"
-              component={Link}
-              to="/cart"
-              aria-label="cart"
-            >
-              <Badge badgeContent={0} color="primary">
-                <CartIcon />
-              </Badge>
-            </IconButton>
-
             {currentUser ? (
               <>
                 <Tooltip title="Account menu">
@@ -263,9 +257,7 @@ const Header: React.FC = () => {
                         height: 32,
                         backgroundColor: hasRole(UserRole.ADMIN)
                           ? 'primary.main'
-                          : hasRole(UserRole.PRODUCT_MANAGER)
-                          ? 'secondary.main'
-                          : 'info.main',
+                          : 'secondary.main',
                       }}
                     >
                       {currentUser.username.charAt(0).toUpperCase()}
@@ -300,9 +292,7 @@ const Header: React.FC = () => {
                         mr: 1,
                         backgroundColor: hasRole(UserRole.ADMIN)
                           ? 'primary.main'
-                          : hasRole(UserRole.PRODUCT_MANAGER)
-                          ? 'secondary.main'
-                          : 'info.main',
+                          : 'secondary.main',
                       }}
                     >
                       {currentUser.username.charAt(0).toUpperCase()}
@@ -335,40 +325,7 @@ const Header: React.FC = () => {
                     </MenuItem>
                   )}
 
-                  {/* Show customer-specific options */}
-                  {hasRole(UserRole.CUSTOMER) && (
-                    <>
-                      <MenuItem onClick={() => handleNavigate('/account')}>
-                        <ListItemIcon>
-                          <AccountCircleIcon
-                            fontSize="small"
-                            sx={{ color: 'primary.light' }}
-                          />
-                        </ListItemIcon>
-                        <ListItemText>My Account</ListItemText>
-                      </MenuItem>
-                      <MenuItem onClick={() => handleNavigate('/orders')}>
-                        <ListItemIcon>
-                          <HistoryIcon
-                            fontSize="small"
-                            sx={{ color: 'primary.light' }}
-                          />
-                        </ListItemIcon>
-                        <ListItemText>Order History</ListItemText>
-                      </MenuItem>
-                      <MenuItem onClick={() => handleNavigate('/wishlist')}>
-                        <ListItemIcon>
-                          <FavoriteIcon
-                            fontSize="small"
-                            sx={{ color: 'primary.light' }}
-                          />
-                        </ListItemIcon>
-                        <ListItemText>Wishlist</ListItemText>
-                      </MenuItem>
-                    </>
-                  )}
-
-                  <MenuItem onClick={() => handleNavigate('/account/settings')}>
+                  <MenuItem onClick={() => handleNavigate(getSettingsLink())}>
                     <ListItemIcon>
                       <SettingsIcon
                         fontSize="small"
@@ -455,9 +412,7 @@ const Header: React.FC = () => {
                   mr: 1,
                   backgroundColor: hasRole(UserRole.ADMIN)
                     ? 'primary.main'
-                    : hasRole(UserRole.PRODUCT_MANAGER)
-                    ? 'secondary.main'
-                    : 'info.main',
+                    : 'secondary.main',
                 }}
               >
                 {currentUser.username.charAt(0).toUpperCase()}
@@ -528,17 +483,6 @@ const Header: React.FC = () => {
             </ListItemButton>
 
             <Divider />
-            <ListItemButton
-              onClick={() => {
-                navigate('/cart');
-                setDrawerOpen(false);
-              }}
-            >
-              <ListItemIcon sx={{ color: 'primary.light' }}>
-                <CartIcon />
-              </ListItemIcon>
-              <ListItemText primary="Shopping Cart" />
-            </ListItemButton>
 
             {currentUser ? (
               <>
@@ -555,45 +499,6 @@ const Header: React.FC = () => {
                     </ListItemIcon>
                     <ListItemText primary="Dashboard" />
                   </ListItemButton>
-                )}
-
-                {/* Customer-specific options */}
-                {hasRole(UserRole.CUSTOMER) && (
-                  <>
-                    <ListItemButton
-                      onClick={() => {
-                        navigate('/account');
-                        setDrawerOpen(false);
-                      }}
-                    >
-                      <ListItemIcon sx={{ color: 'primary.light' }}>
-                        <AccountCircleIcon />
-                      </ListItemIcon>
-                      <ListItemText primary="My Account" />
-                    </ListItemButton>
-                    <ListItemButton
-                      onClick={() => {
-                        navigate('/orders');
-                        setDrawerOpen(false);
-                      }}
-                    >
-                      <ListItemIcon sx={{ color: 'primary.light' }}>
-                        <HistoryIcon />
-                      </ListItemIcon>
-                      <ListItemText primary="Order History" />
-                    </ListItemButton>
-                    <ListItemButton
-                      onClick={() => {
-                        navigate('/wishlist');
-                        setDrawerOpen(false);
-                      }}
-                    >
-                      <ListItemIcon sx={{ color: 'primary.light' }}>
-                        <FavoriteIcon />
-                      </ListItemIcon>
-                      <ListItemText primary="Wishlist" />
-                    </ListItemButton>
-                  </>
                 )}
 
                 <ListItemButton

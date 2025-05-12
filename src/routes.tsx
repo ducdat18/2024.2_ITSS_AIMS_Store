@@ -6,13 +6,10 @@ import MainLayout from './components/layout/MainLayout';
 import AdminLayout from './components/layout/AdminLayout';
 import ProductManagerLayout from './components/layout/ProductManagerLayout';
 
-// Customer pages
+// Public pages
 import HomePage from './pages/customer/HomePage';
 import ProductDetailPage from './pages/customer/ProductDetailPage';
 import ProductPage from './pages/customer/ProductPage';
-import CartPage from './pages/customer/CartPage';
-import CheckoutPage from './pages/customer/CheckoutPage';
-import OrderConfirmationPage from './pages/customer/OrderConfirmationPage';
 import About from './components/common/About';
 
 // Admin pages
@@ -31,20 +28,12 @@ import ProductManagerDashboard from './pages/product-management/ProductManagerDa
 // Auth
 import LoginPage from './pages/auth/LoginPage';
 import RegisterPage from './pages/auth/RegisterPage';
-
-// Auth guard for protected routes
+import React from 'react';
 import { UserRole } from './types';
-import AuthGuard from './components/customer/AuthGuard';
-import AccountPage from './pages/account/AccountPage';
-import AccountOrdersPage from './pages/account/AccountOrdersPage';
-import AccountWishlistPage from './pages/account/AccountWislistPage';
-import AccountAddressPage from './pages/account/AccountAdressPage';
-import AccountSecurityPage from './pages/account/AccountSecurityPage';
-import AccountOrderDetailPage from './pages/account/AccountOrderDetailPage';
-import CancelOrderPage from './pages/customer/CancelOrderPage';
+import AuthGuard from './components/auth/AuthGuard';
 
 export const router = createBrowserRouter([
-  // Main layout (for all users)
+  // Main layout (for public pages)
   {
     path: '/',
     element: <MainLayout />,
@@ -55,86 +44,6 @@ export const router = createBrowserRouter([
       { path: 'product/:id', element: <ProductDetailPage /> },
       { path: 'about', element: <About /> },
       { path: 'contact', element: <About /> }, // Placeholder until Contact page is created
-
-      // Semi-protected routes - can be accessed without login but may require login for certain functionality
-      { path: 'cart', element: <CartPage /> },
-      { path: 'checkout', element: <CheckoutPage /> },
-      { path: 'order/confirmation/:id', element: <OrderConfirmationPage /> },
-      { path: 'order/cancel/:id', element: <CancelOrderPage /> },
-
-      // Customer account pages (protected - require customer login)
-      {
-        path: 'account',
-        element: (
-          <AuthGuard
-            requiredRoles={[UserRole.CUSTOMER]}
-            component={AccountPage}
-          />
-        ),
-      },
-      {
-        path: 'orders',
-        element: (
-          <AuthGuard
-            requiredRoles={[UserRole.CUSTOMER]}
-            component={AccountOrdersPage}
-          />
-        ),
-      },
-      {
-        path: 'orders/:id',
-        element: (
-          <AuthGuard
-            requiredRoles={[UserRole.CUSTOMER]}
-            component={AccountOrderDetailPage}
-          />
-        ),
-      },
-      {
-        path: 'wishlist',
-        element: (
-          <AuthGuard
-            requiredRoles={[UserRole.CUSTOMER]}
-            component={AccountWishlistPage}
-          />
-        ),
-      },
-      {
-        path: 'account/addresses',
-        element: (
-          <AuthGuard
-            requiredRoles={[UserRole.CUSTOMER]}
-            component={AccountAddressPage}
-          />
-        ),
-      },
-      {
-        path: 'account/security',
-        element: (
-          <AuthGuard
-            requiredRoles={[UserRole.CUSTOMER]}
-            component={AccountSecurityPage}
-          />
-        ),
-      },
-      {
-        path: 'account/profile',
-        element: (
-          <AuthGuard
-            requiredRoles={[UserRole.CUSTOMER]}
-            component={AccountPage}
-          />
-        ),
-      },
-      {
-        path: 'account/settings',
-        element: (
-          <AuthGuard
-            requiredRoles={[UserRole.CUSTOMER]}
-            component={AccountSecurityPage}
-          />
-        ),
-      },
     ],
   },
 
