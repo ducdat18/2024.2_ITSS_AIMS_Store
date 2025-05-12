@@ -44,6 +44,254 @@ import { UserAccount, UserRole } from '../../types';
 // Drawer width when open
 const drawerWidth = 240;
 
+// Navigation Item Component
+interface NavItemProps {
+  to: string;
+  icon: React.ReactElement;
+  label: string;
+  isActive: boolean;
+  activeColor?: 'primary' | 'success' | 'error' | 'warning';
+}
+
+const NavItem: React.FC<NavItemProps> = ({
+  to,
+  icon,
+  label,
+  isActive,
+  activeColor = 'primary',
+}) => {
+  const getActiveStyles = () => {
+    switch (activeColor) {
+      case 'success':
+        return {
+          backgroundColor: 'rgba(0, 191, 165, 0.15)',
+          borderLeft: '3px solid #00bfa5',
+          hoverBg: 'rgba(0, 191, 165, 0.2)',
+          iconColor: 'success.light',
+          textColor: 'success.light',
+        };
+      case 'error':
+        return {
+          backgroundColor: 'rgba(255, 82, 82, 0.15)',
+          borderLeft: '3px solid #ff5252',
+          hoverBg: 'rgba(255, 82, 82, 0.2)',
+          iconColor: 'error.light',
+          textColor: 'error.light',
+        };
+      default:
+        return {
+          backgroundColor: 'rgba(2, 136, 209, 0.15)',
+          borderLeft: '3px solid #0288d1',
+          hoverBg: 'rgba(2, 136, 209, 0.2)',
+          iconColor: 'primary.light',
+          textColor: 'primary.light',
+        };
+    }
+  };
+
+  const activeStyles = getActiveStyles();
+
+  return (
+    <ListItemButton
+      component={Link}
+      to={to}
+      selected={isActive}
+      sx={{
+        py: 1.5,
+        pl: 2,
+        '&.Mui-selected': {
+          backgroundColor: activeStyles.backgroundColor,
+          borderLeft: activeStyles.borderLeft,
+          '&:hover': {
+            backgroundColor: activeStyles.hoverBg,
+          },
+        },
+        '&:hover': {
+          backgroundColor: 'rgba(2, 136, 209, 0.1)',
+        },
+      }}
+    >
+      <ListItemIcon>
+        <Box
+          sx={{ color: isActive ? activeStyles.iconColor : 'text.secondary' }}
+        >
+          {icon}
+        </Box>
+      </ListItemIcon>
+      <ListItemText
+        primary={label}
+        primaryTypographyProps={{
+          color: isActive ? activeStyles.textColor : 'text.primary',
+          fontWeight: isActive ? 'bold' : 'regular',
+        }}
+      />
+    </ListItemButton>
+  );
+};
+
+// Notifications Menu Component
+interface NotificationsMenuProps {
+  anchorEl: HTMLElement | null;
+  open: boolean;
+  onClose: () => void;
+}
+
+const NotificationsMenu: React.FC<NotificationsMenuProps> = ({
+  anchorEl,
+  open,
+  onClose,
+}) => {
+  return (
+    <Menu
+      anchorEl={anchorEl}
+      open={open}
+      onClose={onClose}
+      slotProps={{
+        paper: {
+          sx: {
+            width: 320,
+            maxHeight: 450,
+            mt: 1.5,
+            overflow: 'auto',
+            borderRadius: 2,
+            boxShadow: '0px 5px 15px rgba(0, 0, 0, 0.3)',
+            border: '1px solid rgba(100, 255, 218, 0.1)',
+            backgroundImage:
+              'linear-gradient(135deg, #0d2538 0%, #041c2c 100%)',
+          },
+        },
+      }}
+      transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+      anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+    >
+      <Box sx={{ p: 2, borderBottom: '1px solid rgba(100, 255, 218, 0.1)' }}>
+        <Typography variant="subtitle1" fontWeight="bold" color="primary.light">
+          Notifications
+        </Typography>
+        <Typography variant="caption" color="text.secondary">
+          No new notifications
+        </Typography>
+      </Box>
+      <Box sx={{ p: 3, textAlign: 'center' }}>
+        <Typography variant="body2" color="text.secondary">
+          You don't have any notifications at the moment
+        </Typography>
+      </Box>
+    </Menu>
+  );
+};
+
+// Profile Menu Component
+interface ProfileMenuProps {
+  anchorEl: HTMLElement | null;
+  open: boolean;
+  onClose: () => void;
+  user: UserAccount | null;
+  onProfileClick: () => void;
+  onSettingsClick: () => void;
+  onLogoutClick: () => void;
+}
+
+const ProfileMenu: React.FC<ProfileMenuProps> = ({
+  anchorEl,
+  open,
+  onClose,
+  user,
+  onProfileClick,
+  onSettingsClick,
+  onLogoutClick,
+}) => {
+  return (
+    <Menu
+      anchorEl={anchorEl}
+      open={open}
+      onClose={onClose}
+      slotProps={{
+        paper: {
+          sx: {
+            mt: 1.5,
+            minWidth: 180,
+            borderRadius: 2,
+            boxShadow: '0px 5px 15px rgba(0, 0, 0, 0.3)',
+            border: '1px solid rgba(100, 255, 218, 0.1)',
+            backgroundImage:
+              'linear-gradient(135deg, #0d2538 0%, #041c2c 100%)',
+          },
+        },
+      }}
+      transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+      anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+    >
+      <Box
+        sx={{
+          px: 2,
+          py: 1.5,
+          borderBottom: '1px solid rgba(100, 255, 218, 0.1)',
+        }}
+      >
+        <Typography variant="subtitle1" fontWeight="bold" color="primary.light">
+          {user ? user.username : 'Admin User'}
+        </Typography>
+        <Typography variant="caption" color="text.secondary">
+          {user ? user.email : 'Loading...'}
+        </Typography>
+      </Box>
+      <MenuItem
+        onClick={onProfileClick}
+        sx={{
+          py: 1.5,
+          '&:hover': {
+            backgroundColor: 'rgba(2, 136, 209, 0.1)',
+          },
+        }}
+      >
+        <ListItemIcon>
+          <PersonIcon fontSize="small" sx={{ color: 'primary.light' }} />
+        </ListItemIcon>
+        <ListItemText
+          primary="My Profile"
+          sx={{ '& .MuiTypography-root': { fontSize: '0.9rem' } }}
+        />
+      </MenuItem>
+      <MenuItem
+        onClick={onSettingsClick}
+        sx={{
+          py: 1.5,
+          '&:hover': {
+            backgroundColor: 'rgba(2, 136, 209, 0.1)',
+          },
+        }}
+      >
+        <ListItemIcon>
+          <SettingsIcon fontSize="small" sx={{ color: 'primary.light' }} />
+        </ListItemIcon>
+        <ListItemText
+          primary="Settings"
+          sx={{ '& .MuiTypography-root': { fontSize: '0.9rem' } }}
+        />
+      </MenuItem>
+      <Divider sx={{ borderColor: 'rgba(100, 255, 218, 0.1)' }} />
+      <MenuItem
+        onClick={onLogoutClick}
+        sx={{
+          py: 1.5,
+          '&:hover': {
+            backgroundColor: 'rgba(255, 82, 82, 0.1)',
+          },
+        }}
+      >
+        <ListItemIcon>
+          <LogoutIcon fontSize="small" sx={{ color: 'error.light' }} />
+        </ListItemIcon>
+        <ListItemText
+          primary="Logout"
+          sx={{ '& .MuiTypography-root': { fontSize: '0.9rem' } }}
+        />
+      </MenuItem>
+    </Menu>
+  );
+};
+
 const AdminLayout: React.FC = () => {
   const theme = useTheme();
   const navigate = useNavigate();
@@ -88,7 +336,7 @@ const AdminLayout: React.FC = () => {
 
   // Handle notification menu
   const handleNotificationsOpen = (event: React.MouseEvent<HTMLElement>) => {
-    setNotificationsAnchorEl(event.currentTarget as HTMLElement);
+    setNotificationsAnchorEl(event.currentTarget);
   };
 
   const handleNotificationsClose = () => {
@@ -97,7 +345,7 @@ const AdminLayout: React.FC = () => {
 
   // Handle profile menu
   const handleProfileOpen = (event: React.MouseEvent<HTMLElement>) => {
-    setProfileAnchorEl(event.currentTarget as HTMLElement);
+    setProfileAnchorEl(event.currentTarget);
   };
 
   const handleProfileClose = () => {
@@ -132,6 +380,43 @@ const AdminLayout: React.FC = () => {
     return adminAccount.username.charAt(0).toUpperCase();
   };
 
+  // Render app logo
+  const renderLogo = (variant: 'appbar' | 'drawer') => (
+    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+      <WavesIcon
+        sx={{
+          color: 'primary.light',
+          mr: 1.5,
+          fontSize: variant === 'drawer' ? 32 : 28,
+        }}
+      />
+      <Box>
+        <Typography
+          variant="h6"
+          component="div"
+          sx={{
+            fontWeight: 'bold',
+            lineHeight: 1.1,
+            color: variant === 'drawer' ? 'primary.light' : 'inherit',
+          }}
+        >
+          AIMS Admin
+        </Typography>
+        <Typography
+          variant="caption"
+          sx={{
+            color: variant === 'drawer' ? 'text.secondary' : 'primary.light',
+            textTransform: 'uppercase',
+            letterSpacing: '0.05em',
+            fontSize: '0.7rem',
+          }}
+        >
+          {variant === 'drawer' ? 'VERSION 1.0' : 'Control Panel'}
+        </Typography>
+      </Box>
+    </Box>
+  );
+
   return (
     <Box sx={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
       {/* App Bar */}
@@ -157,32 +442,7 @@ const AdminLayout: React.FC = () => {
             {drawerOpen ? <ChevronLeftIcon /> : <MenuIcon />}
           </IconButton>
 
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <WavesIcon sx={{ color: 'primary.light', mr: 1.5, fontSize: 28 }} />
-            <Box>
-              <Typography
-                variant="h6"
-                component="div"
-                sx={{
-                  fontWeight: 'bold',
-                  lineHeight: 1.1,
-                }}
-              >
-                AIMS Admin
-              </Typography>
-              <Typography
-                variant="caption"
-                sx={{
-                  color: 'primary.light',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.05em',
-                  fontSize: '0.7rem',
-                }}
-              >
-                Control Panel
-              </Typography>
-            </Box>
-          </Box>
+          {renderLogo('appbar')}
 
           <Box sx={{ flexGrow: 1 }} />
 
@@ -238,7 +498,7 @@ const AdminLayout: React.FC = () => {
         </Toolbar>
       </AppBar>
 
-      {/* Drawer / Sidebar - Changed to temporary for both mobile and desktop */}
+      {/* Drawer / Sidebar */}
       <Drawer
         variant="temporary"
         open={drawerOpen}
@@ -268,117 +528,28 @@ const AdminLayout: React.FC = () => {
             borderBottom: '1px solid rgba(100, 255, 218, 0.1)',
           }}
         >
-          <WavesIcon
-            sx={{
-              fontSize: 32,
-              color: 'primary.light',
-              mr: 1.5,
-            }}
-          />
-          <Box>
-            <Typography
-              variant="h6"
-              sx={{
-                fontWeight: 'bold',
-                color: 'primary.light',
-                lineHeight: 1.1,
-              }}
-            >
-              AIMS Admin
-            </Typography>
-            <Typography
-              variant="caption"
-              sx={{
-                color: 'text.secondary',
-                letterSpacing: '0.05em',
-              }}
-            >
-              VERSION 1.0
-            </Typography>
-          </Box>
+          {renderLogo('drawer')}
         </Toolbar>
 
         <Divider sx={{ borderColor: 'rgba(100, 255, 218, 0.1)' }} />
 
         {/* Main navigation */}
         <List component="nav" sx={{ pt: 1 }}>
-          <ListItemButton
-            component={Link}
+          {/* Dashboard Link */}
+          <NavItem
             to="/admin/dashboard"
-            selected={isActive('/admin/dashboard')}
-            sx={{
-              py: 1.5,
-              pl: 2,
-              '&.Mui-selected': {
-                backgroundColor: 'rgba(2, 136, 209, 0.15)',
-                borderLeft: '3px solid #0288d1',
-                '&:hover': {
-                  backgroundColor: 'rgba(2, 136, 209, 0.2)',
-                },
-              },
-              '&:hover': {
-                backgroundColor: 'rgba(2, 136, 209, 0.1)',
-              },
-            }}
-          >
-            <ListItemIcon>
-              <DashboardIcon
-                sx={{
-                  color: isActive('/admin/dashboard')
-                    ? 'primary.light'
-                    : 'text.secondary',
-                }}
-              />
-            </ListItemIcon>
-            <ListItemText
-              primary="Dashboard"
-              primaryTypographyProps={{
-                color: isActive('/admin/dashboard')
-                  ? 'primary.light'
-                  : 'text.primary',
-                fontWeight: isActive('/admin/dashboard') ? 'bold' : 'regular',
-              }}
-            />
-          </ListItemButton>
+            icon={<DashboardIcon />}
+            label="Dashboard"
+            isActive={isActive('/admin/dashboard')}
+          />
 
-          <ListItemButton
-            component={Link}
+          {/* User Management Link */}
+          <NavItem
             to="/admin/users"
-            selected={isActive('/admin/users')}
-            sx={{
-              py: 1.5,
-              pl: 2,
-              '&.Mui-selected': {
-                backgroundColor: 'rgba(2, 136, 209, 0.15)',
-                borderLeft: '3px solid #0288d1',
-                '&:hover': {
-                  backgroundColor: 'rgba(2, 136, 209, 0.2)',
-                },
-              },
-              '&:hover': {
-                backgroundColor: 'rgba(2, 136, 209, 0.1)',
-              },
-            }}
-          >
-            <ListItemIcon>
-              <PeopleIcon
-                sx={{
-                  color: isActive('/admin/users')
-                    ? 'primary.light'
-                    : 'text.secondary',
-                }}
-              />
-            </ListItemIcon>
-            <ListItemText
-              primary="User Management"
-              primaryTypographyProps={{
-                color: isActive('/admin/users')
-                  ? 'primary.light'
-                  : 'text.primary',
-                fontWeight: isActive('/admin/users') ? 'bold' : 'regular',
-              }}
-            />
-          </ListItemButton>
+            icon={<PeopleIcon />}
+            label="User Management"
+            isActive={isActive('/admin/users')}
+          />
 
           <Divider sx={{ my: 1, borderColor: 'rgba(100, 255, 218, 0.1)' }} />
 
@@ -397,126 +568,31 @@ const AdminLayout: React.FC = () => {
             User Actions
           </ListSubheader>
 
-          <ListItemButton
-            component={Link}
+          {/* Add User Link */}
+          <NavItem
             to="/admin/users/add"
-            selected={isActive('/admin/users/add')}
-            sx={{
-              py: 1.5,
-              pl: 2,
-              '&.Mui-selected': {
-                backgroundColor: 'rgba(2, 136, 209, 0.15)',
-                borderLeft: '3px solid #0288d1',
-                '&:hover': {
-                  backgroundColor: 'rgba(2, 136, 209, 0.2)',
-                },
-              },
-              '&:hover': {
-                backgroundColor: 'rgba(2, 136, 209, 0.1)',
-              },
-            }}
-          >
-            <ListItemIcon>
-              <PersonAddIcon
-                sx={{
-                  color: isActive('/admin/users/add')
-                    ? 'primary.light'
-                    : 'text.secondary',
-                }}
-              />
-            </ListItemIcon>
-            <ListItemText
-              primary="Add New User"
-              primaryTypographyProps={{
-                color: isActive('/admin/users/add')
-                  ? 'primary.light'
-                  : 'text.primary',
-                fontWeight: isActive('/admin/users/add') ? 'bold' : 'regular',
-              }}
-            />
-          </ListItemButton>
+            icon={<PersonAddIcon />}
+            label="Add New User"
+            isActive={isActive('/admin/users/add')}
+          />
 
-          <ListItemButton
-            component={Link}
+          {/* Admin Users Link */}
+          <NavItem
             to="/admin/users?role=ADMIN"
-            selected={location.search.includes('role=ADMIN')}
-            sx={{
-              py: 1.5,
-              pl: 2,
-              '&.Mui-selected': {
-                backgroundColor: 'rgba(0, 191, 165, 0.15)',
-                borderLeft: '3px solid #00bfa5',
-                '&:hover': {
-                  backgroundColor: 'rgba(0, 191, 165, 0.2)',
-                },
-              },
-              '&:hover': {
-                backgroundColor: 'rgba(0, 191, 165, 0.1)',
-              },
-            }}
-          >
-            <ListItemIcon>
-              <AdminIcon
-                sx={{
-                  color: location.search.includes('role=ADMIN')
-                    ? 'success.light'
-                    : 'text.secondary',
-                }}
-              />
-            </ListItemIcon>
-            <ListItemText
-              primary="Admin Users"
-              primaryTypographyProps={{
-                color: location.search.includes('role=ADMIN')
-                  ? 'success.light'
-                  : 'text.primary',
-                fontWeight: location.search.includes('role=ADMIN')
-                  ? 'bold'
-                  : 'regular',
-              }}
-            />
-          </ListItemButton>
+            icon={<AdminIcon />}
+            label="Admin Users"
+            isActive={location.search.includes('role=ADMIN')}
+            activeColor="success"
+          />
 
-          <ListItemButton
-            component={Link}
+          {/* Blocked Users Link */}
+          <NavItem
             to="/admin/users?status=blocked"
-            selected={location.search.includes('status=blocked')}
-            sx={{
-              py: 1.5,
-              pl: 2,
-              '&.Mui-selected': {
-                backgroundColor: 'rgba(255, 82, 82, 0.15)',
-                borderLeft: '3px solid #ff5252',
-                '&:hover': {
-                  backgroundColor: 'rgba(255, 82, 82, 0.2)',
-                },
-              },
-              '&:hover': {
-                backgroundColor: 'rgba(255, 82, 82, 0.1)',
-              },
-            }}
-          >
-            <ListItemIcon>
-              <BlockIcon
-                sx={{
-                  color: location.search.includes('status=blocked')
-                    ? 'error.light'
-                    : 'text.secondary',
-                }}
-              />
-            </ListItemIcon>
-            <ListItemText
-              primary="Blocked Users"
-              primaryTypographyProps={{
-                color: location.search.includes('status=blocked')
-                  ? 'error.light'
-                  : 'text.primary',
-                fontWeight: location.search.includes('status=blocked')
-                  ? 'bold'
-                  : 'regular',
-              }}
-            />
-          </ListItemButton>
+            icon={<BlockIcon />}
+            label="Blocked Users"
+            isActive={location.search.includes('status=blocked')}
+            activeColor="error"
+          />
 
           <Box sx={{ flexGrow: 1 }} />
 
@@ -545,7 +621,7 @@ const AdminLayout: React.FC = () => {
         </List>
       </Drawer>
 
-      {/* Main content - Modified to always use full width */}
+      {/* Main content */}
       <Box
         component="main"
         sx={{
@@ -567,149 +643,32 @@ const AdminLayout: React.FC = () => {
         </Container>
       </Box>
 
-      {/* Notifications menu */}
-      <Menu
+      {/* Notifications Menu */}
+      <NotificationsMenu
         anchorEl={notificationsAnchorEl}
         open={Boolean(notificationsAnchorEl)}
         onClose={handleNotificationsClose}
-        slotProps={{
-          paper: {
-            sx: {
-              width: 320,
-              maxHeight: 450,
-              mt: 1.5,
-              overflow: 'auto',
-              borderRadius: 2,
-              boxShadow: '0px 5px 15px rgba(0, 0, 0, 0.3)',
-              border: '1px solid rgba(100, 255, 218, 0.1)',
-              backgroundImage:
-                'linear-gradient(135deg, #0d2538 0%, #041c2c 100%)',
-            },
-          },
-        }}
-        transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-        anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-      >
-        <Box sx={{ p: 2, borderBottom: '1px solid rgba(100, 255, 218, 0.1)' }}>
-          <Typography
-            variant="subtitle1"
-            fontWeight="bold"
-            color="primary.light"
-          >
-            Notifications
-          </Typography>
-          <Typography variant="caption" color="text.secondary">
-            No new notifications
-          </Typography>
-        </Box>
-        <Box sx={{ p: 3, textAlign: 'center' }}>
-          <Typography variant="body2" color="text.secondary">
-            You don't have any notifications at the moment
-          </Typography>
-        </Box>
-      </Menu>
+      />
 
-      {/* Profile menu */}
-      <Menu
+      {/* Profile Menu */}
+      <ProfileMenu
         anchorEl={profileAnchorEl}
         open={Boolean(profileAnchorEl)}
         onClose={handleProfileClose}
-        slotProps={{
-          paper: {
-            sx: {
-              mt: 1.5,
-              minWidth: 180,
-              borderRadius: 2,
-              boxShadow: '0px 5px 15px rgba(0, 0, 0, 0.3)',
-              border: '1px solid rgba(100, 255, 218, 0.1)',
-              backgroundImage:
-                'linear-gradient(135deg, #0d2538 0%, #041c2c 100%)',
-            },
-          },
+        user={adminAccount}
+        onProfileClick={() => {
+          handleProfileClose();
+          navigate('/admin/profile');
         }}
-        transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-        anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-      >
-        <Box
-          sx={{
-            px: 2,
-            py: 1.5,
-            borderBottom: '1px solid rgba(100, 255, 218, 0.1)',
-          }}
-        >
-          <Typography
-            variant="subtitle1"
-            fontWeight="bold"
-            color="primary.light"
-          >
-            {adminAccount ? adminAccount.username : 'Admin User'}
-          </Typography>
-          <Typography variant="caption" color="text.secondary">
-            {adminAccount ? adminAccount.email : 'Loading...'}
-          </Typography>
-        </Box>
-        <MenuItem
-          onClick={() => {
-            handleProfileClose();
-            navigate('/admin/profile');
-          }}
-          sx={{
-            py: 1.5,
-            '&:hover': {
-              backgroundColor: 'rgba(2, 136, 209, 0.1)',
-            },
-          }}
-        >
-          <ListItemIcon>
-            <PersonIcon fontSize="small" sx={{ color: 'primary.light' }} />
-          </ListItemIcon>
-          <ListItemText
-            primary="My Profile"
-            sx={{ '& .MuiTypography-root': { fontSize: '0.9rem' } }}
-          />
-        </MenuItem>
-        <MenuItem
-          onClick={() => {
-            handleProfileClose();
-            navigate('/admin/settings');
-          }}
-          sx={{
-            py: 1.5,
-            '&:hover': {
-              backgroundColor: 'rgba(2, 136, 209, 0.1)',
-            },
-          }}
-        >
-          <ListItemIcon>
-            <SettingsIcon fontSize="small" sx={{ color: 'primary.light' }} />
-          </ListItemIcon>
-          <ListItemText
-            primary="Settings"
-            sx={{ '& .MuiTypography-root': { fontSize: '0.9rem' } }}
-          />
-        </MenuItem>
-        <Divider sx={{ borderColor: 'rgba(100, 255, 218, 0.1)' }} />
-        <MenuItem
-          onClick={() => {
-            handleProfileClose();
-            handleLogout();
-          }}
-          sx={{
-            py: 1.5,
-            '&:hover': {
-              backgroundColor: 'rgba(255, 82, 82, 0.1)',
-            },
-          }}
-        >
-          <ListItemIcon>
-            <LogoutIcon fontSize="small" sx={{ color: 'error.light' }} />
-          </ListItemIcon>
-          <ListItemText
-            primary="Logout"
-            sx={{ '& .MuiTypography-root': { fontSize: '0.9rem' } }}
-          />
-        </MenuItem>
-      </Menu>
+        onSettingsClick={() => {
+          handleProfileClose();
+          navigate('/admin/settings');
+        }}
+        onLogoutClick={() => {
+          handleProfileClose();
+          handleLogout();
+        }}
+      />
     </Box>
   );
 };

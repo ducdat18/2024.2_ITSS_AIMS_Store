@@ -1,40 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import {
-  Box,
-  Container,
-  Typography,
-  Paper,
-  TextField,
-  Button,
-  FormControl,
-  FormLabel,
-  FormGroup,
-  FormControlLabel,
-  Checkbox,
-  InputAdornment,
-  IconButton,
-  Alert,
-  Divider,
-  CircularProgress,
-  FormHelperText,
-  Grid2,
-} from '@mui/material';
-import {
-  Person as PersonIcon,
-  Email as EmailIcon,
-  Lock as LockIcon,
-  Visibility as VisibilityIcon,
-  VisibilityOff as VisibilityOffIcon,
-  Save as SaveIcon,
-  ArrowBack as ArrowBackIcon,
-  Cancel as CancelIcon,
-  AdminPanelSettings as AdminIcon,
-  ShoppingBag as ProductManagerIcon,
-  Waves as WavesIcon,
-} from '@mui/icons-material';
+import { Box, Container, Paper, Alert } from '@mui/material';
+import { Person as PersonIcon } from '@mui/icons-material';
 import { useParams, useNavigate } from 'react-router-dom';
 import { UserAccount, UserRole } from '../../types';
 import { mockAccountService } from '../../mock/mockDataAccount';
+import LoadingIndicator from '../../components/admin/common/LoadingIndicator';
+import PageHeader from '../../components/admin/common/PageHeader';
+import PageLayout from '../../components/admin/dashboard/PageLayout';
+import UserForm from '../../components/admin/user/UserForm';
+
+
 
 // Form data interface
 interface UserFormData {
@@ -298,125 +273,21 @@ const UserFormPage: React.FC = () => {
 
   if (loading) {
     return (
-      <Box
-        sx={{
-          p: 5,
-          textAlign: 'center',
-          height: '70vh',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          flexDirection: 'column',
-          gap: 2,
-        }}
-      >
-        <WavesIcon
-          sx={{
-            fontSize: 60,
-            color: 'primary.light',
-            animation: 'pulse 2s infinite',
-            '@keyframes pulse': {
-              '0%': {
-                transform: 'scale(0.95)',
-                opacity: 0.7,
-              },
-              '70%': {
-                transform: 'scale(1.1)',
-                opacity: 1,
-              },
-              '100%': {
-                transform: 'scale(0.95)',
-                opacity: 0.7,
-              },
-            },
-          }}
-        />
-        <Typography
-          variant="h5"
-          sx={{
-            color: 'text.secondary',
-            fontWeight: 'medium',
-          }}
-        >
-          {isEditMode ? 'Loading user data...' : 'Preparing form...'}
-        </Typography>
-      </Box>
+      <LoadingIndicator
+        message={isEditMode ? 'Loading user data...' : 'Preparing form...'}
+      />
     );
   }
 
   return (
-    <Box
-      sx={{
-        py: { xs: 4, md: 5 },
-        position: 'relative',
-        overflow: 'hidden',
-        minHeight: '70vh',
-        '&::before': {
-          content: '""',
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundImage:
-            'radial-gradient(circle at 20% 30%, rgba(2, 136, 209, 0.05) 0%, transparent 50%), radial-gradient(circle at 80% 70%, rgba(100, 255, 218, 0.05) 0%, transparent 50%)',
-          zIndex: 1,
-        },
-      }}
-    >
-      <Container
-        maxWidth="md"
-        sx={{
-          position: 'relative',
-          zIndex: 2,
-        }}
-      >
+    <PageLayout>
+      <Container maxWidth="md">
         {/* Page title */}
-        <Box sx={{ display: 'flex', alignItems: 'center', mb: 4 }}>
-          <Button
-            variant="outlined"
-            color="primary"
-            onClick={() => navigate(-1)}
-            startIcon={<ArrowBackIcon />}
-            sx={{
-              mr: 2,
-              borderColor: 'rgba(100, 255, 218, 0.3)',
-              '&:hover': {
-                borderColor: 'rgba(100, 255, 218, 0.5)',
-                backgroundColor: 'rgba(100, 255, 218, 0.05)',
-              },
-            }}
-          >
-            Back
-          </Button>
-
-          <Typography
-            variant="h4"
-            component="h1"
-            gutterBottom
-            sx={{
-              fontWeight: 'bold',
-              color: 'primary.light',
-              display: 'flex',
-              alignItems: 'center',
-              gap: 1.5,
-              position: 'relative',
-              '&::after': {
-                content: '""',
-                position: 'absolute',
-                bottom: -8,
-                left: 0,
-                width: 60,
-                height: 3,
-                background:
-                  'linear-gradient(90deg, rgba(100, 255, 218, 0.7), rgba(100, 255, 218, 0.1))',
-                borderRadius: 2,
-              },
-            }}
-          >
-            <PersonIcon /> {isEditMode ? 'Edit User' : 'Add New User'}
-          </Typography>
-        </Box>
+        <PageHeader
+          title={isEditMode ? 'Edit User' : 'Add New User'}
+          icon={<PersonIcon />}
+          onBackClick={() => navigate(-1)}
+        />
 
         {/* Success/error messages */}
         {successMessage && (
@@ -471,428 +342,24 @@ const UserFormPage: React.FC = () => {
             },
           }}
         >
-          <Box
-            component="form"
+          <UserForm
+            formData={formData}
+            errors={errors}
+            isEditMode={isEditMode}
+            submitLoading={submitLoading}
+            formTouched={formTouched}
+            showPassword={showPassword}
+            showConfirmPassword={showConfirmPassword}
+            onInputChange={handleInputChange}
+            onRoleChange={handleRoleChange}
+            onTogglePasswordVisibility={togglePasswordVisibility}
+            onToggleConfirmPasswordVisibility={toggleConfirmPasswordVisibility}
             onSubmit={handleSubmit}
-            sx={{
-              p: { xs: 3, md: 4 },
-              position: 'relative',
-              zIndex: 2,
-            }}
-          >
-            <Typography
-              variant="h5"
-              gutterBottom
-              sx={{
-                color: 'primary.light',
-                fontWeight: 'bold',
-                display: 'flex',
-                alignItems: 'center',
-                gap: 1,
-              }}
-            >
-              User Information
-            </Typography>
-            <Divider sx={{ mb: 3, borderColor: 'rgba(100, 255, 218, 0.1)' }} />
-
-            {/* User Information Fields */}
-            <Grid2 container spacing={3}>
-              <Grid2 size={{ xs: 12, sm: 6 }}>
-                <TextField
-                  fullWidth
-                  label="Username"
-                  name="username"
-                  value={formData.username}
-                  onChange={handleInputChange}
-                  error={!!errors.username}
-                  helperText={errors.username}
-                  required
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <PersonIcon
-                          sx={{ color: 'rgba(100, 255, 218, 0.7)' }}
-                        />
-                      </InputAdornment>
-                    ),
-                  }}
-                  sx={{
-                    '& .MuiOutlinedInput-root': {
-                      backgroundColor: 'rgba(1, 22, 39, 0.3)',
-                      '&:hover': {
-                        backgroundColor: 'rgba(1, 22, 39, 0.5)',
-                      },
-                      '& fieldset': {
-                        borderColor: 'rgba(100, 255, 218, 0.3)',
-                      },
-                      '&:hover fieldset': {
-                        borderColor: 'rgba(100, 255, 218, 0.5)',
-                      },
-                      '&.Mui-focused fieldset': {
-                        borderColor: 'rgba(100, 255, 218, 0.7)',
-                      },
-                    },
-                  }}
-                />
-              </Grid2>
-
-              <Grid2 size={{ xs: 12, sm: 6 }}>
-                <TextField
-                  fullWidth
-                  label="Email"
-                  name="email"
-                  type="email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  error={!!errors.email}
-                  helperText={errors.email}
-                  required
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <EmailIcon sx={{ color: 'rgba(100, 255, 218, 0.7)' }} />
-                      </InputAdornment>
-                    ),
-                  }}
-                  sx={{
-                    '& .MuiOutlinedInput-root': {
-                      backgroundColor: 'rgba(1, 22, 39, 0.3)',
-                      '&:hover': {
-                        backgroundColor: 'rgba(1, 22, 39, 0.5)',
-                      },
-                      '& fieldset': {
-                        borderColor: 'rgba(100, 255, 218, 0.3)',
-                      },
-                      '&:hover fieldset': {
-                        borderColor: 'rgba(100, 255, 218, 0.5)',
-                      },
-                      '&.Mui-focused fieldset': {
-                        borderColor: 'rgba(100, 255, 218, 0.7)',
-                      },
-                    },
-                  }}
-                />
-              </Grid2>
-
-              <Grid2 size={{ xs: 12, sm: 6 }}>
-                <TextField
-                  fullWidth
-                  label={
-                    isEditMode
-                      ? 'New Password (leave blank to keep current)'
-                      : 'Password'
-                  }
-                  name="password"
-                  type={showPassword ? 'text' : 'password'}
-                  value={formData.password}
-                  onChange={handleInputChange}
-                  error={!!errors.password}
-                  helperText={errors.password}
-                  required={!isEditMode}
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <LockIcon sx={{ color: 'rgba(100, 255, 218, 0.7)' }} />
-                      </InputAdornment>
-                    ),
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <IconButton
-                          onClick={togglePasswordVisibility}
-                          edge="end"
-                          sx={{
-                            color: 'rgba(100, 255, 218, 0.7)',
-                            '&:hover': {
-                              backgroundColor: 'rgba(100, 255, 218, 0.05)',
-                            },
-                          }}
-                        >
-                          {showPassword ? (
-                            <VisibilityOffIcon />
-                          ) : (
-                            <VisibilityIcon />
-                          )}
-                        </IconButton>
-                      </InputAdornment>
-                    ),
-                  }}
-                  sx={{
-                    '& .MuiOutlinedInput-root': {
-                      backgroundColor: 'rgba(1, 22, 39, 0.3)',
-                      '&:hover': {
-                        backgroundColor: 'rgba(1, 22, 39, 0.5)',
-                      },
-                      '& fieldset': {
-                        borderColor: 'rgba(100, 255, 218, 0.3)',
-                      },
-                      '&:hover fieldset': {
-                        borderColor: 'rgba(100, 255, 218, 0.5)',
-                      },
-                      '&.Mui-focused fieldset': {
-                        borderColor: 'rgba(100, 255, 218, 0.7)',
-                      },
-                    },
-                  }}
-                />
-              </Grid2>
-
-              <Grid2 size={{ xs: 12, sm: 6 }}>
-                <TextField
-                  fullWidth
-                  label="Confirm Password"
-                  name="confirmPassword"
-                  type={showConfirmPassword ? 'text' : 'password'}
-                  value={formData.confirmPassword}
-                  onChange={handleInputChange}
-                  error={!!errors.confirmPassword}
-                  helperText={errors.confirmPassword}
-                  required={!isEditMode || formData.password.length > 0}
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <LockIcon sx={{ color: 'rgba(100, 255, 218, 0.7)' }} />
-                      </InputAdornment>
-                    ),
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <IconButton
-                          onClick={toggleConfirmPasswordVisibility}
-                          edge="end"
-                          sx={{
-                            color: 'rgba(100, 255, 218, 0.7)',
-                            '&:hover': {
-                              backgroundColor: 'rgba(100, 255, 218, 0.05)',
-                            },
-                          }}
-                        >
-                          {showConfirmPassword ? (
-                            <VisibilityOffIcon />
-                          ) : (
-                            <VisibilityIcon />
-                          )}
-                        </IconButton>
-                      </InputAdornment>
-                    ),
-                  }}
-                  sx={{
-                    '& .MuiOutlinedInput-root': {
-                      backgroundColor: 'rgba(1, 22, 39, 0.3)',
-                      '&:hover': {
-                        backgroundColor: 'rgba(1, 22, 39, 0.5)',
-                      },
-                      '& fieldset': {
-                        borderColor: 'rgba(100, 255, 218, 0.3)',
-                      },
-                      '&:hover fieldset': {
-                        borderColor: 'rgba(100, 255, 218, 0.5)',
-                      },
-                      '&.Mui-focused fieldset': {
-                        borderColor: 'rgba(100, 255, 218, 0.7)',
-                      },
-                    },
-                  }}
-                />
-              </Grid2>
-
-              <Grid2 size={{ xs: 12 }}>
-                <Divider
-                  sx={{ my: 2, borderColor: 'rgba(100, 255, 218, 0.1)' }}
-                />
-
-                <FormControl component="fieldset" error={!!errors.roles}>
-                  <FormLabel
-                    component="legend"
-                    sx={{
-                      color: 'text.primary',
-                      '&.Mui-focused': {
-                        color: 'primary.light',
-                      },
-                    }}
-                  >
-                    User Roles (select at least one)
-                  </FormLabel>
-                  <FormGroup
-                    sx={{
-                      display: 'flex',
-                      flexDirection: 'row',
-                      mt: 1,
-                    }}
-                  >
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          checked={formData.roles.includes(UserRole.ADMIN)}
-                          onChange={() => handleRoleChange(UserRole.ADMIN)}
-                          sx={{
-                            color: 'rgba(100, 255, 218, 0.5)',
-                            '&.Mui-checked': {
-                              color: 'success.light',
-                            },
-                          }}
-                          icon={
-                            <AdminIcon
-                              sx={{ color: 'rgba(0, 191, 165, 0.5)' }}
-                            />
-                          }
-                          checkedIcon={<AdminIcon />}
-                        />
-                      }
-                      label="Administrator"
-                      sx={{
-                        mr: 4,
-                        '& .MuiFormControlLabel-label': {
-                          color: formData.roles.includes(UserRole.ADMIN)
-                            ? 'success.light'
-                            : 'text.secondary',
-                        },
-                      }}
-                    />
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          checked={formData.roles.includes(
-                            UserRole.PRODUCT_MANAGER
-                          )}
-                          onChange={() =>
-                            handleRoleChange(UserRole.PRODUCT_MANAGER)
-                          }
-                          sx={{
-                            color: 'rgba(100, 255, 218, 0.5)',
-                            '&.Mui-checked': {
-                              color: 'warning.light',
-                            },
-                          }}
-                          icon={
-                            <ProductManagerIcon
-                              sx={{ color: 'rgba(255, 152, 0, 0.5)' }}
-                            />
-                          }
-                          checkedIcon={<ProductManagerIcon />}
-                        />
-                      }
-                      label="Product Manager"
-                      sx={{
-                        '& .MuiFormControlLabel-label': {
-                          color: formData.roles.includes(
-                            UserRole.PRODUCT_MANAGER
-                          )
-                            ? 'warning.light'
-                            : 'text.secondary',
-                        },
-                      }}
-                    />
-                  </FormGroup>
-                  {errors.roles && (
-                    <FormHelperText error>{errors.roles}</FormHelperText>
-                  )}
-                </FormControl>
-              </Grid2>
-
-              <Grid2 size={{ xs: 12 }}>
-                <Divider
-                  sx={{ my: 2, borderColor: 'rgba(100, 255, 218, 0.1)' }}
-                />
-
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={formData.isBlocked}
-                      onChange={handleInputChange}
-                      name="isBlocked"
-                      sx={{
-                        color: 'rgba(255, 82, 82, 0.5)',
-                        '&.Mui-checked': {
-                          color: 'error.light',
-                        },
-                      }}
-                    />
-                  }
-                  label="Block User"
-                  sx={{
-                    '& .MuiFormControlLabel-label': {
-                      color: formData.isBlocked
-                        ? 'error.light'
-                        : 'text.secondary',
-                    },
-                  }}
-                />
-                {formData.isBlocked && (
-                  <Typography
-                    variant="caption"
-                    color="error.light"
-                    sx={{ display: 'block', mt: 0.5 }}
-                  >
-                    Blocked users cannot access the system until unblocked.
-                  </Typography>
-                )}
-              </Grid2>
-            </Grid2>
-
-            {/* Form buttons */}
-            <Box
-              sx={{
-                display: 'flex',
-                justifyContent: 'flex-end',
-                mt: 4,
-                gap: 2,
-              }}
-            >
-              <Button
-                variant="outlined"
-                color="error"
-                onClick={() => navigate(-1)}
-                startIcon={<CancelIcon />}
-                disabled={submitLoading}
-                sx={{
-                  borderColor: 'rgba(255, 82, 82, 0.3)',
-                  '&:hover': {
-                    borderColor: 'rgba(255, 82, 82, 0.5)',
-                    backgroundColor: 'rgba(255, 82, 82, 0.05)',
-                  },
-                }}
-              >
-                Cancel
-              </Button>
-
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                startIcon={
-                  submitLoading ? <CircularProgress size={20} /> : <SaveIcon />
-                }
-                disabled={submitLoading || (!formTouched && isEditMode)}
-                sx={{
-                  px: 3,
-                  position: 'relative',
-                  overflow: 'hidden',
-                  '&::after': {
-                    content: '""',
-                    position: 'absolute',
-                    top: 0,
-                    left: '-100%',
-                    width: '100%',
-                    height: '100%',
-                    background:
-                      'linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)',
-                    transition: 'all 0.6s',
-                  },
-                  '&:hover::after': {
-                    left: '100%',
-                  },
-                }}
-              >
-                {submitLoading
-                  ? 'Saving...'
-                  : isEditMode
-                  ? 'Save Changes'
-                  : 'Create User'}
-              </Button>
-            </Box>
-          </Box>
+            onCancel={() => navigate(-1)}
+          />
         </Paper>
       </Container>
-    </Box>
+    </PageLayout>
   );
 };
 
