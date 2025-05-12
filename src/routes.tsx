@@ -10,6 +10,10 @@ import ProductManagerLayout from './components/layout/ProductManagerLayout';
 import HomePage from './pages/customer/HomePage';
 import ProductDetailPage from './pages/customer/ProductDetailPage';
 import ProductPage from './pages/customer/ProductPage';
+import CartPage from './pages/customer/CartPage';
+import CheckoutPage from './pages/customer/CheckoutPage';
+import OrderConfirmationPage from './pages/customer/OrderConfirmationPage';
+import CancelOrderPage from './pages/customer/CancelOrderPage';
 import About from './components/common/About';
 
 // Admin pages
@@ -29,8 +33,8 @@ import ProductManagerDashboard from './pages/product-management/ProductManagerDa
 import LoginPage from './pages/auth/LoginPage';
 import RegisterPage from './pages/auth/RegisterPage';
 import React from 'react';
-import { UserRole } from './types';
 import AuthGuard from './components/auth/AuthGuard';
+import { UserRole } from './types';
 
 export const router = createBrowserRouter([
   // Main layout (for public pages)
@@ -44,6 +48,12 @@ export const router = createBrowserRouter([
       { path: 'product/:id', element: <ProductDetailPage /> },
       { path: 'about', element: <About /> },
       { path: 'contact', element: <About /> }, // Placeholder until Contact page is created
+
+      // Shopping cart routes - accessible without login
+      { path: 'cart', element: <CartPage /> },
+      { path: 'checkout', element: <CheckoutPage /> },
+      { path: 'order/confirmation/:id', element: <OrderConfirmationPage /> },
+      { path: 'order/cancel/:id', element: <CancelOrderPage /> },
     ],
   },
 
