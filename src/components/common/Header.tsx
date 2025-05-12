@@ -6,6 +6,7 @@ import {
   Box,
   IconButton,
   InputBase,
+  Badge,
   Container,
   Button,
   Drawer,
@@ -34,6 +35,7 @@ import {
   Logout as LogoutIcon,
   Settings as SettingsIcon,
   Dashboard as DashboardIcon,
+  ShoppingCart as CartIcon,
 } from '@mui/icons-material';
 import { Link, useNavigate } from 'react-router-dom';
 import { UserRole } from '../../types';
@@ -240,6 +242,17 @@ const Header: React.FC = () => {
           </Box>
 
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <IconButton
+              color="inherit"
+              component={Link}
+              to="/cart"
+              aria-label="cart"
+            >
+              <Badge badgeContent={0} color="primary">
+                <CartIcon />
+              </Badge>
+            </IconButton>
+
             {currentUser ? (
               <>
                 <Tooltip title="Account menu">
@@ -480,6 +493,19 @@ const Header: React.FC = () => {
               }}
             >
               <ListItemText primary="Contact" />
+            </ListItemButton>
+
+            <Divider />
+            <ListItemButton
+              onClick={() => {
+                navigate('/cart');
+                setDrawerOpen(false);
+              }}
+            >
+              <ListItemIcon sx={{ color: 'primary.light' }}>
+                <CartIcon />
+              </ListItemIcon>
+              <ListItemText primary="Shopping Cart" />
             </ListItemButton>
 
             <Divider />

@@ -17,6 +17,7 @@ import {
   MovieCreation as DVDIcon,
   Person as PersonIcon,
   Waves as WavesIcon,
+  ShoppingCart as CartIcon,
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 
@@ -101,6 +102,15 @@ const Sidebar: React.FC<SidebarProps> = ({ open, onClose }) => {
               <ListItemText primary={category.label} />
             </ListItemButton>
           ))}
+
+          <Divider sx={{ borderColor: 'rgba(100, 255, 218, 0.1)' }} />
+
+          <ListItemButton onClick={() => handleNavigation('/cart')}>
+            <ListItemIcon sx={{ color: 'primary.light' }}>
+              <CartIcon />
+            </ListItemIcon>
+            <ListItemText primary="Shopping Cart" />
+          </ListItemButton>
 
           <Divider sx={{ borderColor: 'rgba(100, 255, 218, 0.1)' }} />
 
