@@ -6,23 +6,24 @@ import CustomBreadcrumbs from '../../components/customer/common/CustomBreadcrumb
 import ErrorState from '../../components/customer/common/ErrorState';
 import LoadingState from '../../components/customer/common/LoadingState';
 import PageContainer from '../../components/customer/common/PageContainer';
-import { InlineSuccessAlert } from '../../components/customer/common/SuccessMessage';
 import ProductCategoryIcon from '../../components/product/ProductCategoryIcon';
 import AddToCartSection from '../../components/product/ProductDetailInfo/AddToCardSection';
 import ProductHeader from '../../components/product/ProductDetailInfo/ProductHeader';
 import ProductTabs from '../../components/product/ProductDetailInfo/ProductTabs';
 import { mockApiService } from '../../mock/mockApi';
 import { Product } from '../../types';
+import { addToCart } from '../../services/cart';
+import { useNotification } from '../../components/customer/common/Notification';
 
 const ProductDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { showSuccess, showError, NotificationComponent } = useNotification();
 
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [quantity, setQuantity] = useState(1);
-  const [addedToCart, setAddedToCart] = useState(false);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -54,10 +55,13 @@ const ProductDetailPage: React.FC = () => {
 
   const handleAddToCart = () => {
     if (product) {
-      // In a real app, this would use a cart context or service
-      console.log('Added to cart:', { product, quantity });
-      setAddedToCart(true);
-      setTimeout(() => setAddedToCart(false), 3000);
+      try {
+        addToCart(product, quantity);
+        showSuccess(`${quantity} item(s) added to your cart!`);
+      } catch (error) {
+        console.error('Error adding to cart:', error);
+        showError('Failed to add product to cart. Please try again.');
+      }
     }
   };
 
@@ -75,7 +79,6 @@ const ProductDetailPage: React.FC = () => {
     );
   }
 
-  // Build breadcrumb items
   const breadcrumbItems = [
     { label: 'Home', link: '/' },
     { label: 'Products', link: '/products' },
@@ -143,10 +146,6 @@ const ProductDetailPage: React.FC = () => {
             onQuantityChange={setQuantity}
             onAddToCart={handleAddToCart}
           />
-
-          {addedToCart && (
-            <InlineSuccessAlert message="Product added to cart successfully!" />
-          )}
         </Grid2>
       </Grid2>
 
@@ -173,6 +172,8 @@ const ProductDetailPage: React.FC = () => {
           Continue Shopping
         </Button>
       </Box>
+
+      <NotificationComponent />
     </PageContainer>
   );
 };

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Button, Grid2 } from '@mui/material';
+import { Button, Grid2 } from '@mui/material';
 import {
   ArrowBack as ArrowBackIcon,
   ShoppingCart as ShoppingCartIcon,
@@ -12,7 +12,12 @@ import EmptyCart from '../../components/cart/EmptyCard';
 import LoadingState from '../../components/customer/common/LoadingState';
 import PageContainer from '../../components/customer/common/PageContainer';
 import PageTitle from '../../components/customer/common/PageTitle';
-import { mockApiService } from '../../mock/mockApi';
+import { useNotification } from '../../components/customer/common/Notification';
+import {
+  getCart,
+  updateCartItemQuantity,
+  removeFromCart,
+} from '../../services/cart';
 
 const CartPage: React.FC = () => {
   const [cartItems, setCartItems] = useState<CartItemType[]>([]);
@@ -21,22 +26,21 @@ const CartPage: React.FC = () => {
     [key: string]: number;
   }>({});
   const navigate = useNavigate();
+  const { showSuccess, showError, NotificationComponent } = useNotification();
 
   useEffect(() => {
-    // Fetch cart items from API
-    const fetchCart = async () => {
+    const loadCartFromLocalStorage = () => {
       try {
         setLoading(true);
-        const products = await mockApiService.getProducts();
-        const mockCart: CartItemType[] = [
-          { product: products[0], quantity: 2, price: products[0].price },
-          { product: products[1], quantity: 1, price: products[1].price },
-        ];
-        setCartItems(mockCart);
-
-        // Check for inventory issues
+        const cart = getCart();
+        const cartItemsData: CartItemType[] = cart.items.map((item) => ({
+          product: item.product,
+          quantity: item.quantity,
+          price: item.product.price,
+        }));
+        setCartItems(cartItemsData);
         const insufficientStock: { [key: string]: number } = {};
-        mockCart.forEach((item) => {
+        cartItemsData.forEach((item) => {
           if (item.quantity > item.product.quantity) {
             insufficientStock[item.product.id] = item.product.quantity;
           }
@@ -45,48 +49,60 @@ const CartPage: React.FC = () => {
 
         setLoading(false);
       } catch (error) {
-        console.error('Error fetching cart:', error);
+        console.error('Error loading cart from localStorage:', error);
+        showError('Error loading your cart. Please try refreshing the page.');
         setLoading(false);
       }
     };
 
-    fetchCart();
+    loadCartFromLocalStorage();
   }, []);
 
   const handleQuantityChange = (productId: string, newQuantity: number) => {
     if (newQuantity > 0) {
-      setCartItems(
-        cartItems.map((item) =>
-          item.product.id === productId
-            ? { ...item, quantity: newQuantity }
-            : item
-        )
-      );
-
-      // Update insufficient items notification
-      const product = cartItems.find(
-        (item) => item.product.id === productId
-      )?.product;
-      if (product && newQuantity > product.quantity) {
-        setInsufficientItems({
-          ...insufficientItems,
-          [productId]: product.quantity,
-        });
-      } else {
-        const updatedInsufficient = { ...insufficientItems };
-        delete updatedInsufficient[productId];
-        setInsufficientItems(updatedInsufficient);
+      try {
+        updateCartItemQuantity(productId, newQuantity);
+        setCartItems(
+          cartItems.map((item) =>
+            item.product.id === productId
+              ? { ...item, quantity: newQuantity }
+              : item
+          )
+        );
+        const product = cartItems.find(
+          (item) => item.product.id === productId
+        )?.product;
+        if (product && newQuantity > product.quantity) {
+          setInsufficientItems({
+            ...insufficientItems,
+            [productId]: product.quantity,
+          });
+        } else {
+          const updatedInsufficient = { ...insufficientItems };
+          delete updatedInsufficient[productId];
+          setInsufficientItems(updatedInsufficient);
+        }
+        showSuccess('Cart updated successfully');
+      } catch (error) {
+        console.error('Error updating cart:', error);
+        showError('Failed to update cart. Please try again.');
       }
     }
   };
 
   const handleRemoveItem = (productId: string) => {
-    setCartItems(cartItems.filter((item) => item.product.id !== productId));
+    try {
+      removeFromCart(productId);
+      setCartItems(cartItems.filter((item) => item.product.id !== productId));
+      const updatedInsufficient = { ...insufficientItems };
+      delete updatedInsufficient[productId];
+      setInsufficientItems(updatedInsufficient);
 
-    // Remove from insufficient items if present
-    const updatedInsufficient = { ...insufficientItems };
-    delete updatedInsufficient[productId];
-    setInsufficientItems(updatedInsufficient);
+      showSuccess('Item removed from cart');
+    } catch (error) {
+      console.error('Error removing item from cart:', error);
+      showError('Failed to remove item. Please try again.');
+    }
   };
 
   const calculateSubtotal = () => {
@@ -100,12 +116,11 @@ const CartPage: React.FC = () => {
 
   const handleProceedToCheckout = () => {
     if (Object.keys(insufficientItems).length > 0) {
-      // Cannot proceed if inventory is insufficient
-      alert('Please update quantities for items with insufficient inventory.');
+      showError(
+        'Please update quantities for items with insufficient inventory before proceeding.'
+      );
       return;
     }
-
-    // Proceed to checkout
     navigate('/checkout');
   };
 
@@ -158,6 +173,7 @@ const CartPage: React.FC = () => {
           </Grid2>
         </>
       )}
+      <NotificationComponent />
     </PageContainer>
   );
 };

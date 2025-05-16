@@ -7,16 +7,18 @@ import ProductGrid from '../../components/product/ProductGrid';
 import CategoryBanner from '../../components/common/CategoryBanner';
 import { Waves as WavesIcon } from '@mui/icons-material';
 import Banner from '../../components/common/Banner';
+import { useNotification } from '../../components/customer/common/Notification';
+import { addToCart } from '../../services/cart';
 
 const HomePage: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
+  const { showSuccess, showError, NotificationComponent } = useNotification();
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        // Get random 20 products for the homepage as per AIMS requirements
         const data = await mockApiService.getProducts();
         const randomProducts = [...data]
           .sort(() => 0.5 - Math.random())
@@ -33,8 +35,13 @@ const HomePage: React.FC = () => {
   }, []);
 
   const handleAddToCart = (product: Product) => {
-    // Add to cart functionality
-    console.log('Added to cart:', product);
+    try {
+      addToCart(product, 1);
+      showSuccess(`${product.title} added to your cart!`);
+    } catch (error) {
+      console.error('Error adding product to cart:', error);
+      showError('Failed to add product to cart. Please try again.');
+    }
   };
 
   const handlePageChange = (
@@ -94,10 +101,8 @@ const HomePage: React.FC = () => {
 
   return (
     <Box sx={{ overflow: 'hidden' }}>
-      {/* Enhanced Hero Banner */}
       <Banner />
 
-      {/* Category Banners */}
       <Box
         sx={{
           py: { xs: 6, md: 8 },
@@ -129,7 +134,6 @@ const HomePage: React.FC = () => {
         }}
       />
 
-      {/* Featured Products */}
       <Box
         sx={{
           py: { xs: 6, md: 8 },
@@ -176,9 +180,8 @@ const HomePage: React.FC = () => {
           />
         </Container>
       </Box>
-
-      {/* Newsletter */}
       <Newsletter />
+      <NotificationComponent />
     </Box>
   );
 };

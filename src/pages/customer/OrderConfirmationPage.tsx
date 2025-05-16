@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Button, Grid2 } from '@mui/material';
+import { Box, Button } from '@mui/material';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
   ArrowBack as ArrowBackIcon,

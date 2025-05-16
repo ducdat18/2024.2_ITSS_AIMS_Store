@@ -10,13 +10,15 @@ import FilterSidebar from '../../components/product/ProductFilter/FilterSidebar'
 import ProductGrid from '../../components/product/ProductGrid';
 import { mockApiService } from '../../mock/mockApi';
 import { Product } from '../../types';
+import { useNotification } from '../../components/customer/common/Notification';
+import { addToCart } from '../../services/cart';
 
 const ProductPage: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const queryParams = new URLSearchParams(location.search);
+  const { showSuccess, showError, NotificationComponent } = useNotification();
 
-  // State
   const [products, setProducts] = useState<Product[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -24,15 +26,13 @@ const ProductPage: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [productsPerPage] = useState(20);
 
-  // Filter states
   const [filters, setFilters] = useState({
     category: queryParams.get('category') || '',
     search: queryParams.get('search') || '',
-    priceRange: [0, 2000000] as [number, number], // VND
-    sortBy: 'popularity', // popularity, priceAsc, priceDesc, newest
+    priceRange: [0, 2000000] as [number, number],
+    sortBy: 'popularity',
   });
 
-  // Fetch products
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -50,19 +50,16 @@ const ProductPage: React.FC = () => {
     fetchProducts();
   }, []);
 
-  // Apply filters
   useEffect(() => {
     if (products.length > 0) {
       let result = [...products];
 
-      // Category filter
       if (filters.category) {
         result = result.filter(
           (product) => product.category === filters.category
         );
       }
 
-      // Search filter
       if (filters.search) {
         const searchLower = filters.search.toLowerCase();
         result = result.filter(
@@ -72,14 +69,12 @@ const ProductPage: React.FC = () => {
         );
       }
 
-      // Price range filter
       result = result.filter(
         (product) =>
           product.price >= filters.priceRange[0] &&
           product.price <= filters.priceRange[1]
       );
 
-      // Sorting
       switch (filters.sortBy) {
         case 'priceAsc':
           result.sort((a, b) => a.price - b.price);
@@ -94,16 +89,13 @@ const ProductPage: React.FC = () => {
               new Date(a.warehouseEntryDate).getTime()
           );
           break;
-        // Default: popularity or any other case
-        // Keeping original order or could implement popularity logic
       }
 
       setFilteredProducts(result);
-      setCurrentPage(1); // Reset to first page when filters change
+      setCurrentPage(1);
     }
   }, [filters, products]);
 
-  // Handle filter changes
   const handleFilterChange = (
     name: string,
     value: string | number | [number, number]
@@ -112,8 +104,6 @@ const ProductPage: React.FC = () => {
       ...filters,
       [name]: value,
     });
-
-    // Update URL query params for certain filters
     if (name === 'category' || name === 'search') {
       const params = new URLSearchParams(location.search);
 
@@ -129,8 +119,6 @@ const ProductPage: React.FC = () => {
       });
     }
   };
-
-  // Clear all filters
   const handleClearFilters = () => {
     setFilters({
       category: '',
@@ -140,8 +128,6 @@ const ProductPage: React.FC = () => {
     });
     navigate('/products');
   };
-
-  // Get current page products
   const indexOfLastProduct = currentPage * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
   const currentProducts = filteredProducts.slice(
@@ -149,7 +135,6 @@ const ProductPage: React.FC = () => {
     indexOfLastProduct
   );
 
-  // Handle page change
   const handlePageChange = (
     _event: React.ChangeEvent<unknown>,
     page: number
@@ -158,10 +143,14 @@ const ProductPage: React.FC = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  // Add to cart handler
   const handleAddToCart = (product: Product) => {
-    // This would be implemented with a cart context or similar
-    console.log('Added to cart:', product);
+    try {
+      addToCart(product, 1);
+      showSuccess(`${product.title} added to your cart!`);
+    } catch (error) {
+      console.error('Error adding to cart:', error);
+      showError('Failed to add product to cart. Please try again.');
+    }
   };
 
   if (loading) {
@@ -172,7 +161,6 @@ const ProductPage: React.FC = () => {
     return <ErrorState message={error} />;
   }
 
-  // Generate active filters for the sidebar
   const activeFilters = [
     ...(filters.category
       ? [
@@ -207,7 +195,6 @@ const ProductPage: React.FC = () => {
       />
 
       <Grid2 container spacing={4}>
-        {/* Filters sidebar */}
         <Grid2 size={{ xs: 12, md: 3 }}>
           <FilterSidebar
             filters={filters}
@@ -217,7 +204,6 @@ const ProductPage: React.FC = () => {
           />
         </Grid2>
 
-        {/* Products grid */}
         <Grid2 size={{ xs: 12, md: 9 }}>
           {filteredProducts.length === 0 ? (
             <EmptyCart
@@ -260,6 +246,8 @@ const ProductPage: React.FC = () => {
           )}
         </Grid2>
       </Grid2>
+
+      <NotificationComponent />
     </PageContainer>
   );
 };

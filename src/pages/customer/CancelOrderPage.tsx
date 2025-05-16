@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Box } from '@mui/material';
-import { CheckCircleOutline as CheckCircleIcon } from '@mui/icons-material';
 import ErrorState from '../../components/customer/common/ErrorState';
 import LoadingState from '../../components/customer/common/LoadingState';
 import PageContainer from '../../components/customer/common/PageContainer';
@@ -50,7 +48,7 @@ const CancelOrderPage: React.FC = () => {
     fetchOrderDetails();
   }, [id]);
 
-  const handleCancelOrder = async (reason: string, comments: string) => {
+  const handleCancelOrder = async (_reason: string, _comments: string) => {
     try {
       setLoading(true);
       await new Promise((resolve) => setTimeout(resolve, 1500));

@@ -19,8 +19,19 @@ import LoadingState from '../../components/customer/common/LoadingState';
 import PageContainer from '../../components/customer/common/PageContainer';
 import PageTitle from '../../components/customer/common/PageTitle';
 import SectionContainer from '../../components/customer/common/SectionContainer';
-import { mockApiService } from '../../mock/mockApi';
 import { formatCurrency } from '../../utils/formatters';
+import { useNotification } from '../../components/customer/common/Notification';
+import { getCart } from '../../services/cart';
+import {
+  calculateDeliveryFee,
+  calculateRushDeliveryFee,
+  validateDeliveryForm,
+  processOrder,
+  calculateSubtotal,
+  calculateVAT,
+  calculateTotal,
+} from '../../services/checkout';
+import { DeliveryInfo } from '../../types';
 
 // Constants
 const vietnamProvinces = [
@@ -34,12 +45,14 @@ const vietnamProvinces = [
 
 const CheckoutPage: React.FC = () => {
   const navigate = useNavigate();
+  const { showSuccess, showError, NotificationComponent } = useNotification();
+
   const [activeStep, setActiveStep] = useState(0);
   const [cartItems, setCartItems] = useState<CartItemType[]>([]);
   const [loading, setLoading] = useState(true);
+  const [processingPayment, setProcessingPayment] = useState(false);
 
-  // Form state
-  const [deliveryInfo, setDeliveryInfo] = useState({
+  const [deliveryInfo, setDeliveryInfo] = useState<DeliveryInfo>({
     recipientName: '',
     email: '',
     phone: '',
@@ -54,29 +67,42 @@ const CheckoutPage: React.FC = () => {
   const [deliveryFee, setDeliveryFee] = useState(0);
   const [rushDeliveryFee, setRushDeliveryFee] = useState(0);
   const [isHanoi, setIsHanoi] = useState(false);
-  // Import PaymentMethodType from the component
+  const [canUseRushDelivery, setCanUseRushDelivery] = useState(false);
   const [paymentMethod, setPaymentMethod] =
     useState<PaymentMethodType>('creditCard');
 
-  // Fetch cart items
+  // Load cart items from localStorage
   useEffect(() => {
-    const fetchCart = async () => {
+    const loadCart = () => {
       try {
-        const products = await mockApiService.getProducts();
-        const mockCart: CartItemType[] = [
-          { product: products[0], quantity: 2, price: products[0].price },
-          { product: products[1], quantity: 1, price: products[1].price },
-        ];
-        setCartItems(mockCart);
+        setLoading(true);
+        const cart = getCart();
+
+        if (cart.items.length === 0) {
+          // Redirect to cart page if cart is empty
+          showError('Your cart is empty. Please add items before checkout.');
+          navigate('/cart');
+          return;
+        }
+
+        // Convert from Cart structure to CartItemType[]
+        const cartItemsData: CartItemType[] = cart.items.map((item) => ({
+          product: item.product,
+          quantity: item.quantity,
+          price: item.product.price,
+        }));
+
+        setCartItems(cartItemsData);
         setLoading(false);
       } catch (error) {
-        console.error('Error fetching cart:', error);
+        console.error('Error loading cart:', error);
+        showError('Failed to load your cart. Please try again later.');
         setLoading(false);
       }
     };
 
-    fetchCart();
-  }, []);
+    loadCart();
+  }, [navigate, showError]);
 
   // Handle delivery info changes
   const handleRecipientInfoChange = (
@@ -97,145 +123,38 @@ const CheckoutPage: React.FC = () => {
 
   // Check if province is Hanoi for rush delivery option
   useEffect(() => {
-    setIsHanoi(deliveryInfo.province === 'Hanoi');
-    if (!isHanoi && deliveryInfo.isRushDelivery) {
+    const isHanoiProvince = deliveryInfo.province === 'Hanoi';
+    setIsHanoi(isHanoiProvince);
+
+    if (!isHanoiProvince && deliveryInfo.isRushDelivery) {
       setDeliveryInfo((prev) => ({ ...prev, isRushDelivery: false }));
     }
-  }, [deliveryInfo.province, isHanoi]);
+  }, [deliveryInfo.province]);
 
   // Calculate delivery fee
   useEffect(() => {
-    if (deliveryInfo.province) {
-      calculateDeliveryFee();
+    if (deliveryInfo.province && cartItems.length > 0) {
+      // Calculate delivery fee and rush delivery eligibility
+      const { deliveryFee: fee, canUseRushDelivery: canUseRush } =
+        calculateDeliveryFee(cartItems, deliveryInfo.province);
+
+      setDeliveryFee(fee);
+      setCanUseRushDelivery(canUseRush);
+
+      // Calculate rush delivery fee if applicable
+      const rushFee = calculateRushDeliveryFee(
+        cartItems,
+        deliveryInfo.isRushDelivery,
+        isHanoi
+      );
+
+      setRushDeliveryFee(rushFee);
     }
-  }, [deliveryInfo.province, deliveryInfo.isRushDelivery, cartItems]);
-
-  // Calculate delivery fee based on location and weight
-  const calculateDeliveryFee = () => {
-    const subtotal = calculateSubtotal();
-
-    // Find the heaviest item weight
-    const heaviestItemWeight = cartItems.reduce(
-      (maxWeight, item) => Math.max(maxWeight, item.product.weight),
-      0
-    );
-
-    let fee = 0;
-    let rushFee = 0;
-
-    // Calculate normal delivery fee
-    if (subtotal >= 100000) {
-      // Free shipping for orders over 100,000 VND (up to 25,000 VND)
-      fee = 0;
-    } else {
-      const isHanoiOrHCMC =
-        deliveryInfo.province === 'Hanoi' ||
-        deliveryInfo.province === 'Ho Chi Minh City';
-
-      if (isHanoiOrHCMC) {
-        // For Hanoi or HCM City: 22,000 VND for first 3kg
-        if (heaviestItemWeight <= 3) {
-          fee = 22000;
-        } else {
-          // Additional 2,500 VND for every 0.5kg over 3kg
-          const additionalWeight = heaviestItemWeight - 3;
-          const additionalFee = Math.ceil(additionalWeight / 0.5) * 2500;
-          fee = 22000 + additionalFee;
-        }
-      } else {
-        // For elsewhere: 30,000 VND for first 0.5kg
-        if (heaviestItemWeight <= 0.5) {
-          fee = 30000;
-        } else {
-          // Additional 2,500 VND for every 0.5kg over 0.5kg
-          const additionalWeight = heaviestItemWeight - 0.5;
-          const additionalFee = Math.ceil(additionalWeight / 0.5) * 2500;
-          fee = 30000 + additionalFee;
-        }
-      }
-
-      // Cap the fee at 25,000 VND for orders over 100,000 VND
-      if (subtotal > 100000 && fee > 25000) {
-        fee = 25000;
-      }
-    }
-
-    // Calculate rush delivery fee if applicable
-    if (deliveryInfo.isRushDelivery && isHanoi) {
-      // Additional 10,000 VND per rush delivery item
-      const rushItems = cartItems.filter((item) => item.product.weight < 3);
-      rushFee = rushItems.length * 10000;
-    }
-
-    setDeliveryFee(fee);
-    setRushDeliveryFee(rushFee);
-  };
-
-  // Calculate subtotal
-  const calculateSubtotal = () => {
-    return cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  };
-
-  // Calculate VAT (10%)
-  const calculateVAT = () => {
-    return calculateSubtotal() * 0.1;
-  };
+  }, [deliveryInfo.province, deliveryInfo.isRushDelivery, cartItems, isHanoi]);
 
   // Validate form before proceeding
   const validateForm = () => {
-    const errors: { [key: string]: string } = {};
-
-    if (!deliveryInfo.recipientName.trim()) {
-      errors.recipientName = 'Recipient name is required';
-    }
-
-    if (!deliveryInfo.email.trim()) {
-      errors.email = 'Email is required';
-    } else if (!/\S+@\S+\.\S+/.test(deliveryInfo.email)) {
-      errors.email = 'Email is invalid';
-    }
-
-    if (!deliveryInfo.phone.trim()) {
-      errors.phone = 'Phone number is required';
-    } else if (!/^\d{10,11}$/.test(deliveryInfo.phone.replace(/\D/g, ''))) {
-      errors.phone = 'Phone number is invalid';
-    }
-
-    if (!deliveryInfo.province) {
-      errors.province = 'Province is required';
-    }
-
-    if (!deliveryInfo.address.trim()) {
-      errors.address = 'Address is required';
-    }
-
-    if (deliveryInfo.isRushDelivery) {
-      if (!deliveryInfo.rushDeliveryTime) {
-        errors.rushDeliveryTime = 'Delivery time is required for rush delivery';
-      } else {
-        // Check if delivery time is valid
-        const deliveryTime = new Date(deliveryInfo.rushDeliveryTime).getTime();
-        const now = new Date().getTime();
-
-        // Must be at least 2 hours in the future (2 hours = 7,200,000 milliseconds)
-        const twoHoursInMs = 2 * 60 * 60 * 1000;
-        const minAllowedTime = now + twoHoursInMs;
-
-        // Check business hours (8am to 8pm)
-        const deliveryDate = new Date(deliveryInfo.rushDeliveryTime);
-        const hour = deliveryDate.getHours();
-        const isBusinessHours = hour >= 8 && hour < 20;
-
-        if (deliveryTime < minAllowedTime) {
-          errors.rushDeliveryTime =
-            'Delivery time must be at least 2 hours from now';
-        } else if (!isBusinessHours) {
-          errors.rushDeliveryTime =
-            'Delivery time must be between 8 AM and 8 PM';
-        }
-      }
-    }
-
+    const errors = validateDeliveryForm(deliveryInfo);
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
   };
@@ -257,35 +176,41 @@ const CheckoutPage: React.FC = () => {
     setActiveStep((prevStep) => prevStep - 1);
   };
 
-  // Simulate payment process
+  // Process payment and create order
   const handlePayment = async () => {
     try {
-      setLoading(true);
-      const totalAmount =
-        calculateSubtotal() + calculateVAT() + deliveryFee + rushDeliveryFee;
+      setProcessingPayment(true);
 
-      // Simulate payment with mock API
-      const response = await mockApiService.processPayment(totalAmount);
+      const order = await processOrder(
+        cartItems,
+        deliveryInfo,
+        deliveryFee,
+        rushDeliveryFee,
+        paymentMethod
+      );
 
-      if (response.success) {
-        // Generate order ID
-        const orderId = `order-${Date.now()}`;
-        navigate(`/order/confirmation/${orderId}`);
-      }
+      // Navigate to order confirmation page with order data
+      navigate(`/order/confirmation/${order.id}`, { state: { order } });
     } catch (error) {
       console.error('Payment failed:', error);
-      alert('Payment failed. Please try again.');
+      showError(
+        'Payment processing failed. Please try again or use a different payment method.'
+      );
     } finally {
-      setLoading(false);
+      setProcessingPayment(false);
     }
   };
 
-  // Check if user can select rush delivery (Hanoi address and eligible products)
-  const canUseRushDelivery =
-    isHanoi && cartItems.some((item) => item.product.weight < 3);
-
-  if (loading) {
-    return <LoadingState message="Preparing your checkout experience..." />;
+  if (loading || processingPayment) {
+    return (
+      <LoadingState
+        message={
+          processingPayment
+            ? 'Processing your payment...'
+            : 'Preparing your checkout experience...'
+        }
+      />
+    );
   }
 
   return (
@@ -435,7 +360,7 @@ const CheckoutPage: React.FC = () => {
                   Subtotal (excl. VAT):
                 </Typography>
                 <Typography color="text.primary">
-                  {formatCurrency(calculateSubtotal())}
+                  {formatCurrency(calculateSubtotal(cartItems))}
                 </Typography>
               </Box>
 
@@ -448,7 +373,7 @@ const CheckoutPage: React.FC = () => {
               >
                 <Typography color="text.secondary">VAT (10%):</Typography>
                 <Typography color="text.primary">
-                  {formatCurrency(calculateVAT())}
+                  {formatCurrency(calculateVAT(cartItems))}
                 </Typography>
               </Box>
 
@@ -503,10 +428,7 @@ const CheckoutPage: React.FC = () => {
                   fontWeight="bold"
                 >
                   {formatCurrency(
-                    calculateSubtotal() +
-                      calculateVAT() +
-                      deliveryFee +
-                      rushDeliveryFee
+                    calculateTotal(cartItems, deliveryFee, rushDeliveryFee)
                   )}
                 </Typography>
               </Box>
@@ -522,8 +444,8 @@ const CheckoutPage: React.FC = () => {
               <OrderReview
                 deliveryInfo={deliveryInfo}
                 items={cartItems}
-                subtotal={calculateSubtotal()}
-                vat={calculateVAT()}
+                subtotal={calculateSubtotal(cartItems)}
+                vat={calculateVAT(cartItems)}
                 deliveryFee={deliveryFee}
                 rushDeliveryFee={rushDeliveryFee}
               />
@@ -627,7 +549,7 @@ const CheckoutPage: React.FC = () => {
                   Subtotal (excl. VAT):
                 </Typography>
                 <Typography color="text.primary">
-                  {formatCurrency(calculateSubtotal())}
+                  {formatCurrency(calculateSubtotal(cartItems))}
                 </Typography>
               </Box>
 
@@ -640,7 +562,7 @@ const CheckoutPage: React.FC = () => {
               >
                 <Typography color="text.secondary">VAT (10%):</Typography>
                 <Typography color="text.primary">
-                  {formatCurrency(calculateVAT())}
+                  {formatCurrency(calculateVAT(cartItems))}
                 </Typography>
               </Box>
 
@@ -695,10 +617,7 @@ const CheckoutPage: React.FC = () => {
                   fontWeight="bold"
                 >
                   {formatCurrency(
-                    calculateSubtotal() +
-                      calculateVAT() +
-                      deliveryFee +
-                      rushDeliveryFee
+                    calculateTotal(cartItems, deliveryFee, rushDeliveryFee)
                   )}
                 </Typography>
               </Box>
@@ -706,6 +625,7 @@ const CheckoutPage: React.FC = () => {
           </Grid2>
         </Grid2>
       )}
+      <NotificationComponent />
     </PageContainer>
   );
 };
